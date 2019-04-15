@@ -1,7 +1,7 @@
 package model
 
 import (
-	"rest-api/model/entity"
+	"exemplo-api-rest/model/entity"
 )
 
 // NextIDTurma Retorna o proximo ID.

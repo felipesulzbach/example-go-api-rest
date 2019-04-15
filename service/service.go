@@ -1,8 +1,8 @@
 package service
 
 import (
+	"exemplo-api-rest/model"
 	"net/http"
-	"rest-api/model"
 	"strconv"
 
 	"github.com/gorilla/mux"

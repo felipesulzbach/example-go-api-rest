@@ -2,7 +2,7 @@ package entity
 
 import (
 	"encoding/json"
-	"rest-api/util"
+	"exemplo-api-rest/util"
 	"strconv"
 	"time"
 )

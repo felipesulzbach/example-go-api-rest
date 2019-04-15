@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"rest-api/model"
+	"exemplo-api-rest/model"
 )
 
 // ListarPessoa Retorna lista total pessoas registradas.

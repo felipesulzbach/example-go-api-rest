@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"rest-api/model"
-	"rest-api/model/entity"
-	"rest-api/util"
+	"exemplo-api-rest/model"
+	"exemplo-api-rest/model/entity"
+	"exemplo-api-rest/util"
 
 	"github.com/gorilla/mux"
 )

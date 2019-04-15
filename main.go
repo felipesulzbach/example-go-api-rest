@@ -4,15 +4,15 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"exemplo-api-rest/model"
+	"exemplo-api-rest/model/entity"
+	"exemplo-api-rest/service"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"rest-api/model"
-	"rest-api/model/entity"
-	"rest-api/service"
 	"strings"
 	"testing"
 	"time"
@@ -26,6 +26,7 @@ func main() {
 }
 
 func configurarServidor() {
+	log.Println("Server Start!")
 	var wait time.Duration
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "a duracao para a qual o servidor normalmente espera que as conexoes existentes terminem - e.g. 15s ou 1m")
 	flag.Parse()
@@ -54,7 +55,7 @@ func configurarServidor() {
 	ctx, cancel := context.WithTimeout(context.Background(), wait)
 	defer cancel()
 	srv.Shutdown(ctx)
-	log.Println("shutting down")
+	log.Println("Server Shutting Down!")
 	os.Exit(0)
 }
 

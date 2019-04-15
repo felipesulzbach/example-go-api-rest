@@ -7,7 +7,8 @@ ___
 ## Pré-requisitos
 * Visual Studio Code ou outro;
 * GoLang (https://golang.org/);
-* Gorilla Mux (https://github.com/gorilla/mux).
+* Gorilla Mux (https://github.com/gorilla/mux);
+* Postgres Driver (https://github.com/lib/pq).
 
 ## Considerações finais
 O GoLang é uma linguagem que foi criada para ser mais performática possível, superando até mesmo linguagens como o Pyton, que atualmente são utilizados como solução para sistemas que necessitam de maior performance.
