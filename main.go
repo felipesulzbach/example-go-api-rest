@@ -66,14 +66,14 @@ func configurarRotas() *mux.Router {
 	subrouterCurso.Path("/").Queries("id", "{id}").HandlerFunc(service.BuscarCurso).Methods("GET").Name("BuscarCurso")
 	subrouterCurso.Path("/").Queries("nome", "{nome}", "descricao", "{descricao}", "datacadastro", "{datacadastro}").HandlerFunc(service.InserirCurso).Methods("POST").Name("InserirCurso")
 	subrouterCurso.Path("/").Queries("id", "{id}", "nome", "{nome}", "descricao", "{descricao}", "datacadastro", "{datacadastro}").HandlerFunc(service.AtualizarCurso).Methods("PUT").Name("AtualizarCurso")
-	subrouterCurso.Path("/").Queries("id", "{id}").HandlerFunc(service.RemoverCurso).Methods("POST").Name("RemoverCurso")
+	subrouterCurso.Path("/").Queries("id", "{id}").HandlerFunc(service.RemoverCurso).Methods("DELETE").Name("RemoverCurso")
 
 	subrouterTurma := router.PathPrefix("/turma").Subrouter()
 	subrouterTurma.Path("").HandlerFunc(service.ListarTurma).Methods("GET")
 	subrouterTurma.Path("/").Queries("id", "{id}").HandlerFunc(service.BuscarTurma).Methods("GET").Name("BuscarTurma")
 	subrouterTurma.Path("/").Queries("idcurso", "{idcurso}", "datainicio", "{datainicio}", "datafim", "{datafim}", "datacadastro", "{datacadastro}").HandlerFunc(service.InserirTurma).Methods("POST").Name("InserirTurma")
 	subrouterTurma.Path("/").Queries("id", "{id}", "idcurso", "{idcurso}", "datainicio", "{datainicio}", "datafim", "{datafim}", "datacadastro", "{datacadastro}").HandlerFunc(service.AtualizarTurma).Methods("PUT").Name("AtualizarTurma")
-	subrouterTurma.Path("/").Queries("id", "{id}").HandlerFunc(service.RemoverTurma).Methods("POST").Name("RemoverTurma")
+	subrouterTurma.Path("/").Queries("id", "{id}").HandlerFunc(service.RemoverTurma).Methods("DELETE").Name("RemoverTurma")
 
 	subrouterPessoa := router.PathPrefix("/pessoa").Subrouter()
 	subrouterPessoa.Path("").HandlerFunc(service.ListarPessoa).Methods("GET")
@@ -83,14 +83,14 @@ func configurarRotas() *mux.Router {
 	subrouterAluno.Path("/").Queries("idpessoa", "{idpessoa}").HandlerFunc(service.BuscarAluno).Methods("GET").Name("BuscarAluno")
 	subrouterAluno.Path("/").Queries("idturma", "{idturma}", "nome", "{nome}", "numerocpf", "{numerocpf}", "numerocelular", "{numerocelular}", "cidade", "{cidade}", "numerocep", "{numerocep}", "endereco", "{endereco}", "datacadastro", "{datacadastro}").HandlerFunc(service.InserirAluno).Methods("POST").Name("InserirAluno")
 	subrouterAluno.Path("/").Queries("idpessoa", "{idpessoa}", "idturma", "{idturma}", "nome", "{nome}", "numerocpf", "{numerocpf}", "numerocelular", "{numerocelular}", "cidade", "{cidade}", "numerocep", "{numerocep}", "endereco", "{endereco}", "datacadastro", "{datacadastro}").HandlerFunc(service.AtualizarAluno).Methods("PUT").Name("AtualizarAluno")
-	subrouterAluno.Path("/").Queries("idpessoa", "{idpessoa}").HandlerFunc(service.RemoverAluno).Methods("POST").Name("RemoverAluno")
+	subrouterAluno.Path("/").Queries("idpessoa", "{idpessoa}").HandlerFunc(service.RemoverAluno).Methods("DELETE").Name("RemoverAluno")
 
 	subrouterProfessor := router.PathPrefix("/professor").Subrouter()
 	subrouterProfessor.Path("").HandlerFunc(service.ListarProfessor).Methods("GET")
 	subrouterProfessor.Path("/").Queries("idpessoa", "{idpessoa}").HandlerFunc(service.BuscarProfessor).Methods("GET").Name("BuscarProfessor")
 	subrouterProfessor.Path("/").Queries("idcurso", "{idcurso}", "nome", "{nome}", "numerocpf", "{numerocpf}", "numerocelular", "{numerocelular}", "cidade", "{cidade}", "numerocep", "{numerocep}", "endereco", "{endereco}", "datacadastro", "{datacadastro}").HandlerFunc(service.InserirProfessor).Methods("POST").Name("InserirProfessor")
 	subrouterProfessor.Path("/").Queries("idpessoa", "{idpessoa}", "idcurso", "{idcurso}", "nome", "{nome}", "numerocpf", "{numerocpf}", "numerocelular", "{numerocelular}", "cidade", "{cidade}", "numerocep", "{numerocep}", "endereco", "{endereco}", "datacadastro", "{datacadastro}").HandlerFunc(service.AtualizarProfessor).Methods("PUT").Name("AtualizarProfessor")
-	subrouterProfessor.Path("/").Queries("idpessoa", "{idpessoa}").HandlerFunc(service.RemoverProfessor).Methods("POST").Name("RemoverProfessor")
+	subrouterProfessor.Path("/").Queries("idpessoa", "{idpessoa}").HandlerFunc(service.RemoverProfessor).Methods("DELETE").Name("RemoverProfessor")
 
 	http.Handle("/", router)
 
