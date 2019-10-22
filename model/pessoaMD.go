@@ -1,7 +1,7 @@
 package model
 
 import (
-	"exemplo-api-rest/model/entity"
+	"github.com/_dev/exemplo-api-rest/model/entity"
 )
 
 // NextIDPessoa Retorna o proximo ID.

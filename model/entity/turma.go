@@ -2,9 +2,10 @@ package entity
 
 import (
 	"encoding/json"
-	"exemplo-api-rest/util"
 	"strconv"
 	"time"
+
+	"github.com/_dev/exemplo-api-rest/util"
 )
 
 // Turma Entidade.

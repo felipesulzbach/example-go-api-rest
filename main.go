@@ -4,9 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"exemplo-api-rest/model"
-	"exemplo-api-rest/model/entity"
-	"exemplo-api-rest/service"
 	"flag"
 	"fmt"
 	"log"
@@ -16,6 +13,10 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/_dev/exemplo-api-rest/model"
+	"github.com/_dev/exemplo-api-rest/model/entity"
+	"github.com/_dev/exemplo-api-rest/service"
 
 	"github.com/gorilla/mux"
 )

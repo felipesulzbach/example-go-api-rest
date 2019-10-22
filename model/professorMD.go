@@ -1,7 +1,7 @@
 package model
 
 import (
-	"exemplo-api-rest/model/entity"
+	"github.com/_dev/exemplo-api-rest/model/entity"
 )
 
 // ListarProfessor Retorna lista total professores registrados.

@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
-	"exemplo-api-rest/model"
-	"exemplo-api-rest/model/entity"
-	"exemplo-api-rest/util"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/_dev/exemplo-api-rest/model"
+	"github.com/_dev/exemplo-api-rest/model/entity"
+	"github.com/_dev/exemplo-api-rest/util"
 
 	"github.com/gorilla/mux"
 )

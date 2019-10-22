@@ -1,9 +1,10 @@
 package service
 
 import (
-	"exemplo-api-rest/model"
 	"net/http"
 	"strconv"
+
+	"github.com/_dev/exemplo-api-rest/model"
 
 	"github.com/gorilla/mux"
 )
