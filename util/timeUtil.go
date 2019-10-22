@@ -5,18 +5,18 @@ import (
 	"time"
 )
 
-// FormatarDataHora Retorna a data formatada "yyyy/mm/dd hh:mm:ss".
-func FormatarDataHora(datahora time.Time) string {
-	// Verificar no link 'https://golang.org/src/time/format.go', os formatos possiveis.
-	retorno := datahora.Format("2006/01/02 15:04:05")
-	return retorno
+// FormatDateTime - Returns the formatted date 'yyyy/mm/dd hh:mm:ss'.
+func FormatDateTime(dateTime time.Time) string {
+	// Visit the 'https://golang.org/src/time/format.go' link for more formats.
+	dateFormated := dateTime.Format("2006/01/02 15:04:05")
+	return dateFormated
 }
 
-// StringToTime Converte data de String para Time.
-func StringToTime(data string) time.Time {
-	datatime, err := time.Parse(time.RFC3339, data)
+// StringToTime - Converts date from String to Time.
+func StringToTime(date string) time.Time {
+	datetime, err := time.Parse(time.RFC3339, date)
 	if err != nil {
 		log.Panic(err)
 	}
-	return datatime
+	return datetime
 }

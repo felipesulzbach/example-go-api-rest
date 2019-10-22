@@ -35,9 +35,9 @@ func (entidade *Class) ToString() string {
 	campos := map[string]string{
 		"ID":               strconv.FormatInt(entidade.ID, 10),
 		"CourseID":         strconv.FormatInt(entidade.CourseID, 10),
-		"StartDate":        util.FormatarDataHora(entidade.StartDate),
-		"EndDate":          util.FormatarDataHora(entidade.EndDate),
-		"RegistrationDate": util.FormatarDataHora(entidade.RegistrationDate),
+		"StartDate":        util.FormatDateTime(entidade.StartDate),
+		"EndDate":          util.FormatDateTime(entidade.EndDate),
+		"RegistrationDate": util.FormatDateTime(entidade.RegistrationDate),
 	}
 	retorno := ToString("Class", campos)
 	return retorno

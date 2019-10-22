@@ -43,7 +43,7 @@ func (entidade *Person) ToString() string {
 		"City":             entidade.City,
 		"ZipCode":          entidade.ZipCode,
 		"Address":          entidade.Address,
-		"RegistrationDate": util.FormatarDataHora(entidade.RegistrationDate),
+		"RegistrationDate": util.FormatDateTime(entidade.RegistrationDate),
 	}
 	retorno := ToString("Person", campos)
 	return retorno

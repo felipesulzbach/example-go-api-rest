@@ -6,7 +6,7 @@ import (
 
 // NextIDTurma Retorna o proximo ID.
 func NextIDTurma(db *DB) (int64, error) {
-	row := db.QueryRow("SELECT (MAX(id) + 1) FROM turma")
+	row := db.QueryRow("SELECT (MAX(id) + 1) FROM GO_TST.class")
 
 	var id int64
 	err := row.Scan(&id)
@@ -17,16 +17,16 @@ func NextIDTurma(db *DB) (int64, error) {
 }
 
 // ListarTurma Retorna lista total turmas registrados.
-func ListarTurma(db *DB) ([]*entity.Turma, error) {
-	rows, err := db.Query("SELECT * FROM turma")
+func ListarTurma(db *DB) ([]*entity.Class, error) {
+	rows, err := db.Query("SELECT * FROM GO_TST.class")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	lista := make([]*entity.Turma, 0)
+	lista := make([]*entity.Class, 0)
 	for rows.Next() {
-		item := new(entity.Turma)
+		item := new(entity.Class)
 		err := rows.Scan(&item.ID, &item.IDCurso, &item.DataInicio, &item.DataFim, &item.DataCadastro)
 		if err != nil {
 			return nil, err

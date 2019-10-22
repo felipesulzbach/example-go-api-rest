@@ -4,30 +4,30 @@ import (
 	"bytes"
 )
 
-// SeparatorEntityFront Usado para separar informacoes entidades.
+// SeparatorEntityFront - Used to separate entity information.
 const SeparatorEntityFront = ": '"
 
-// SeparatorEntityBehind Usado para separar informacoes entidades.
+// SeparatorEntityBehind - Used to separate entity information.
 const SeparatorEntityBehind = "', "
 
-// SeparatorEntityBehind2 Usado para separar informacoes entidades.
+// SeparatorEntityBehind2 - Used to separate entity information.
 const SeparatorEntityBehind2 = "'"
 
-// ToString Retorna string com as informacoes da entidade.
-func ToString(entidade string, campos map[string]string) string {
+// ToString - Returns string with entity information.
+func ToString(entityName string, fields map[string]string) string {
 	var buffer bytes.Buffer
 	buffer.WriteString("[")
-	buffer.WriteString(entidade)
+	buffer.WriteString(entityName)
 	buffer.WriteString(" = {")
 
-	qtd := len(campos)
+	total := len(fields)
 	count := 0
-	for campo, valorCampo := range campos {
-		buffer.WriteString(campo)
+	for field, valueField := range fields {
+		buffer.WriteString(field)
 		buffer.WriteString(SeparatorEntityFront)
-		buffer.WriteString(valorCampo)
+		buffer.WriteString(valueField)
 		count++
-		if qtd != count {
+		if total != count {
 			buffer.WriteString(SeparatorEntityBehind)
 		} else {
 			buffer.WriteString(SeparatorEntityBehind2)

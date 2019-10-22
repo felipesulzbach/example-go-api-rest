@@ -22,14 +22,14 @@ import (
 )
 
 func main() {
-	configurarServidor()
-	//exemploDecoderJSON()
+	serverConfigure()
+	//exampleDecoderJSON()
 }
 
-func configurarServidor() {
+func serverConfigure() {
 	log.Println("Server Start!")
 	var wait time.Duration
-	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "a duracao para a qual o servidor normalmente espera que as conexoes existentes terminem - e.g. 15s ou 1m")
+	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "he duration for which the server normally expects existing connections to end - e.g. 15s ou 1m")
 	flag.Parse()
 
 	router := configurarRotas()
@@ -62,36 +62,36 @@ func configurarServidor() {
 
 func configurarRotas() *mux.Router {
 	router := mux.NewRouter()
-	subrouterCurso := router.PathPrefix("/curso").Subrouter()
+	subrouterCurso := router.PathPrefix("/course").Subrouter()
 	subrouterCurso.Path("").HandlerFunc(service.ListarCurso).Methods("GET")
 	subrouterCurso.Path("/").Queries("id", "{id}").HandlerFunc(service.BuscarCurso).Methods("GET").Name("BuscarCurso")
-	subrouterCurso.Path("/").Queries("nome", "{nome}", "descricao", "{descricao}", "datacadastro", "{datacadastro}").HandlerFunc(service.InserirCurso).Methods("POST").Name("InserirCurso")
-	subrouterCurso.Path("/").Queries("id", "{id}", "nome", "{nome}", "descricao", "{descricao}", "datacadastro", "{datacadastro}").HandlerFunc(service.AtualizarCurso).Methods("PUT").Name("AtualizarCurso")
+	subrouterCurso.Path("/").Queries("name", "{name}", "description", "{description}", "registrationDate", "{registrationDate}").HandlerFunc(service.InserirCurso).Methods("POST").Name("InserirCurso")
+	subrouterCurso.Path("/").Queries("id", "{id}", "name", "{name}", "description", "{description}", "registrationDate", "{registrationDate}").HandlerFunc(service.AtualizarCurso).Methods("PUT").Name("AtualizarCurso")
 	subrouterCurso.Path("/").Queries("id", "{id}").HandlerFunc(service.RemoverCurso).Methods("DELETE").Name("RemoverCurso")
 
-	subrouterTurma := router.PathPrefix("/turma").Subrouter()
+	subrouterTurma := router.PathPrefix("/class").Subrouter()
 	subrouterTurma.Path("").HandlerFunc(service.ListarTurma).Methods("GET")
 	subrouterTurma.Path("/").Queries("id", "{id}").HandlerFunc(service.BuscarTurma).Methods("GET").Name("BuscarTurma")
-	subrouterTurma.Path("/").Queries("idcurso", "{idcurso}", "datainicio", "{datainicio}", "datafim", "{datafim}", "datacadastro", "{datacadastro}").HandlerFunc(service.InserirTurma).Methods("POST").Name("InserirTurma")
-	subrouterTurma.Path("/").Queries("id", "{id}", "idcurso", "{idcurso}", "datainicio", "{datainicio}", "datafim", "{datafim}", "datacadastro", "{datacadastro}").HandlerFunc(service.AtualizarTurma).Methods("PUT").Name("AtualizarTurma")
+	subrouterTurma.Path("/").Queries("courseID", "{courseID}", "startDate", "{startDate}", "endDate", "{endDate}", "registrationDate", "{registrationDate}").HandlerFunc(service.InserirTurma).Methods("POST").Name("InserirTurma")
+	subrouterTurma.Path("/").Queries("id", "{id}", "courseID", "{courseID}", "startDate", "{startDate}", "endDate", "{endDate}", "registrationDate", "{registrationDate}").HandlerFunc(service.AtualizarTurma).Methods("PUT").Name("AtualizarTurma")
 	subrouterTurma.Path("/").Queries("id", "{id}").HandlerFunc(service.RemoverTurma).Methods("DELETE").Name("RemoverTurma")
 
-	subrouterPessoa := router.PathPrefix("/pessoa").Subrouter()
+	subrouterPessoa := router.PathPrefix("/person").Subrouter()
 	subrouterPessoa.Path("").HandlerFunc(service.ListarPessoa).Methods("GET")
 
-	subrouterAluno := router.PathPrefix("/aluno").Subrouter()
+	subrouterAluno := router.PathPrefix("/student").Subrouter()
 	subrouterAluno.Path("").HandlerFunc(service.ListarAluno).Methods("GET")
-	subrouterAluno.Path("/").Queries("idpessoa", "{idpessoa}").HandlerFunc(service.BuscarAluno).Methods("GET").Name("BuscarAluno")
-	subrouterAluno.Path("/").Queries("idturma", "{idturma}", "nome", "{nome}", "numerocpf", "{numerocpf}", "numerocelular", "{numerocelular}", "cidade", "{cidade}", "numerocep", "{numerocep}", "endereco", "{endereco}", "datacadastro", "{datacadastro}").HandlerFunc(service.InserirAluno).Methods("POST").Name("InserirAluno")
-	subrouterAluno.Path("/").Queries("idpessoa", "{idpessoa}", "idturma", "{idturma}", "nome", "{nome}", "numerocpf", "{numerocpf}", "numerocelular", "{numerocelular}", "cidade", "{cidade}", "numerocep", "{numerocep}", "endereco", "{endereco}", "datacadastro", "{datacadastro}").HandlerFunc(service.AtualizarAluno).Methods("PUT").Name("AtualizarAluno")
-	subrouterAluno.Path("/").Queries("idpessoa", "{idpessoa}").HandlerFunc(service.RemoverAluno).Methods("DELETE").Name("RemoverAluno")
+	subrouterAluno.Path("/").Queries("personID", "{personID}").HandlerFunc(service.BuscarAluno).Methods("GET").Name("BuscarAluno")
+	subrouterAluno.Path("/").Queries("classID", "{classID}", "name", "{name}", "cpf", "{cpf}", "cellPhone", "{cellPhone}", "city", "{city}", "zipCode", "{zipCode}", "address", "{address}", "registrationDate", "{registrationDate}").HandlerFunc(service.InserirAluno).Methods("POST").Name("InserirAluno")
+	subrouterAluno.Path("/").Queries("personID", "{personID}", "classID", "{classID}", "name", "{name}", "cpf", "{cpf}", "cellPhone", "{cellPhone}", "city", "{city}", "zipCode", "{zipCode}", "address", "{address}", "registrationDate", "{registrationDate}").HandlerFunc(service.AtualizarAluno).Methods("PUT").Name("AtualizarAluno")
+	subrouterAluno.Path("/").Queries("personID", "{personID}").HandlerFunc(service.RemoverAluno).Methods("DELETE").Name("RemoverAluno")
 
-	subrouterProfessor := router.PathPrefix("/professor").Subrouter()
+	subrouterProfessor := router.PathPrefix("/teacher").Subrouter()
 	subrouterProfessor.Path("").HandlerFunc(service.ListarProfessor).Methods("GET")
-	subrouterProfessor.Path("/").Queries("idpessoa", "{idpessoa}").HandlerFunc(service.BuscarProfessor).Methods("GET").Name("BuscarProfessor")
-	subrouterProfessor.Path("/").Queries("idcurso", "{idcurso}", "nome", "{nome}", "numerocpf", "{numerocpf}", "numerocelular", "{numerocelular}", "cidade", "{cidade}", "numerocep", "{numerocep}", "endereco", "{endereco}", "datacadastro", "{datacadastro}").HandlerFunc(service.InserirProfessor).Methods("POST").Name("InserirProfessor")
-	subrouterProfessor.Path("/").Queries("idpessoa", "{idpessoa}", "idcurso", "{idcurso}", "nome", "{nome}", "numerocpf", "{numerocpf}", "numerocelular", "{numerocelular}", "cidade", "{cidade}", "numerocep", "{numerocep}", "endereco", "{endereco}", "datacadastro", "{datacadastro}").HandlerFunc(service.AtualizarProfessor).Methods("PUT").Name("AtualizarProfessor")
-	subrouterProfessor.Path("/").Queries("idpessoa", "{idpessoa}").HandlerFunc(service.RemoverProfessor).Methods("DELETE").Name("RemoverProfessor")
+	subrouterProfessor.Path("/").Queries("personID", "{personID}").HandlerFunc(service.BuscarProfessor).Methods("GET").Name("BuscarProfessor")
+	subrouterProfessor.Path("/").Queries("courseID", "{courseID}", "name", "{name}", "cpf", "{cpf}", "cellPhone", "{cellPhone}", "city", "{city}", "zipCode", "{zipCode}", "address", "{address}", "registrationDate", "{registrationDate}").HandlerFunc(service.InserirProfessor).Methods("POST").Name("InserirProfessor")
+	subrouterProfessor.Path("/").Queries("personID", "{personID}", "courseID", "{courseID}", "name", "{name}", "cpf", "{cpf}", "cellPhone", "{cellPhone}", "city", "{city}", "zipCode", "{zipCode}", "address", "{address}", "registrationDate", "{registrationDate}").HandlerFunc(service.AtualizarProfessor).Methods("PUT").Name("AtualizarProfessor")
+	subrouterProfessor.Path("/").Queries("personID", "{personID}").HandlerFunc(service.RemoverProfessor).Methods("DELETE").Name("RemoverProfessor")
 
 	http.Handle("/", router)
 
@@ -100,19 +100,19 @@ func configurarRotas() *mux.Router {
 	return router
 }
 
-func exemploDecoderJSON() {
-	jsonStream := []byte(`{"ID":3,"Nome":"Nome 3","Descricao":"Descricao 3","DataCadastro":"2019-01-21T10:07:16.543807Z"}`)
+func exampleDecoderJSON() {
+	jsonStream := []byte(`{"ID":3,"Name":"Name 3","Description":"Description 3","RegistrationDate":"2019-01-21T10:07:16.543807Z"}`)
 
-	var curso *entity.Curso
-	err := json.Unmarshal(jsonStream, &curso)
+	var course *entity.Course
+	err := json.Unmarshal(jsonStream, &course)
 	if err != nil {
-		fmt.Println("Erro:", err)
+		fmt.Println("Error:", err)
 		log.Panic(err)
 	}
-	log.Println(curso.ToString())
+	log.Println(course.ToString())
 }
 
-/// >> teste performance string, buffer, builder ///
+/// >> test performance string, buffer, builder ///
 func testeConcat(b *testing.B) {
 	var str string
 	for n := 0; n < b.N; n++ {
@@ -121,7 +121,7 @@ func testeConcat(b *testing.B) {
 	b.StopTimer()
 
 	if s := strings.Repeat("x", b.N); str != s {
-		b.Errorf("resultado inesperado; got=%s, want=%s", str, s)
+		b.Errorf("unexpected result; got=%s, want=%s", str, s)
 	}
 }
 
@@ -133,7 +133,7 @@ func testeBuffer(b *testing.B) {
 	b.StopTimer()
 
 	if s := strings.Repeat("x", b.N); buffer.String() != s {
-		b.Errorf("resultado inesperado; got=%s, want=%s", buffer.String(), s)
+		b.Errorf("unexpected result; got=%s, want=%s", buffer.String(), s)
 	}
 }
 
@@ -148,7 +148,7 @@ func testeCopy(b *testing.B) {
 	b.StopTimer()
 
 	if s := strings.Repeat("x", b.N); string(bs) != s {
-		b.Errorf("resultado inesperado; got=%s, want=%s", string(bs), s)
+		b.Errorf("unexpected result; got=%s, want=%s", string(bs), s)
 	}
 }
 
@@ -162,12 +162,13 @@ func testeStringBuilder(b *testing.B) {
 	b.StopTimer()
 
 	if s := strings.Repeat("x", b.N); strBuilder.String() != s {
-		b.Errorf("resultado inesperado; got=%s, want=%s", strBuilder.String(), s)
+		b.Errorf("unexpected result; got=%s, want=%s", strBuilder.String(), s)
 	}
 }
 
-/// << teste performance string, buffer, builder ///
+/// << test performance string, buffer, builder ///
 
+/// >> example create table ///
 func testeCreateTable() {
 	db, err := model.NewDB(service.DataSourcePostgre)
 	if err != nil {
@@ -181,7 +182,9 @@ func testeCreateTable() {
 	}
 	defer stmt.Close()
 
-	if _, err := stmt.Exec("curso"); err != nil {
+	if _, err := stmt.Exec("course"); err != nil {
 		log.Fatal(err)
 	}
 }
+
+/// << example create table ///

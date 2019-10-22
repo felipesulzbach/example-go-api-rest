@@ -35,7 +35,7 @@ func (entidade *Course) ToString() string {
 		"ID":               strconv.FormatInt(entidade.ID, 10),
 		"Name":             entidade.Name,
 		"Description":      entidade.Description,
-		"RegistrationDate": util.FormatarDataHora(entidade.RegistrationDate),
+		"RegistrationDate": util.FormatDateTime(entidade.RegistrationDate),
 	}
 	retorno := ToString("Course", campos)
 	return retorno
