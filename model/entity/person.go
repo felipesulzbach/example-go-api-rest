@@ -21,29 +21,29 @@ type Person struct {
 }
 
 // New - Loads a new Person structure.
-func (entidade *Person) New(id int64, name string, cpf string, cellPhone string, city string, zipCode string, address string, registrationDate time.Time) {
-	*entidade = Person{id, name, cpf, cellPhone, city, zipCode, address, registrationDate}
+func (entity *Person) New(id int64, name string, cpf string, cellPhone string, city string, zipCode string, address string, registrationDate time.Time) {
+	*entity = Person{id, name, cpf, cellPhone, city, zipCode, address, registrationDate}
 }
 
 // Decoder - Decodes JSON for structure.
-func (entidade *Person) Decoder(jsonStream string) error {
-	if err := json.Unmarshal([]byte(jsonStream), &entidade); err != nil {
+func (entity *Person) Decoder(jsonStream string) error {
+	if err := json.Unmarshal([]byte(jsonStream), &entity); err != nil {
 		return err
 	}
 	return nil
 }
 
 // ToString - Returns string with Person information.
-func (entidade *Person) ToString() string {
+func (entity *Person) ToString() string {
 	campos := map[string]string{
-		"ID":               strconv.FormatInt(entidade.ID, 10),
-		"Name":             entidade.Name,
-		"Cpf":              entidade.Cpf,
-		"CellPhone":        entidade.CellPhone,
-		"City":             entidade.City,
-		"ZipCode":          entidade.ZipCode,
-		"Address":          entidade.Address,
-		"RegistrationDate": util.FormatDateTime(entidade.RegistrationDate),
+		"ID":               strconv.FormatInt(entity.ID, 10),
+		"Name":             entity.Name,
+		"Cpf":              entity.Cpf,
+		"CellPhone":        entity.CellPhone,
+		"City":             entity.City,
+		"ZipCode":          entity.ZipCode,
+		"Address":          entity.Address,
+		"RegistrationDate": util.FormatDateTime(entity.RegistrationDate),
 	}
 	retorno := ToString("Person", campos)
 	return retorno

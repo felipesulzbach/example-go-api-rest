@@ -12,23 +12,23 @@ type Teacher struct {
 }
 
 // New - Loads a new Teacher structure.
-func (entidade *Teacher) New(personID int64, courseID int64) {
-	*entidade = Teacher{personID, courseID}
+func (entity *Teacher) New(personID int64, courseID int64) {
+	*entity = Teacher{personID, courseID}
 }
 
 // Decoder - Decodes JSON for structure.
-func (entidade *Teacher) Decoder(jsonStream string) error {
-	if err := json.Unmarshal([]byte(jsonStream), &entidade); err != nil {
+func (entity *Teacher) Decoder(jsonStream string) error {
+	if err := json.Unmarshal([]byte(jsonStream), &entity); err != nil {
 		return err
 	}
 	return nil
 }
 
 // ToString - Returns string with Teacher information.
-func (entidade *Teacher) ToString() string {
+func (entity *Teacher) ToString() string {
 	campos := map[string]string{
-		"Pessoa":   strconv.FormatInt(entidade.PersonID, 10),
-		"CourseID": strconv.FormatInt(entidade.CourseID, 10),
+		"Pessoa":   strconv.FormatInt(entity.PersonID, 10),
+		"CourseID": strconv.FormatInt(entity.CourseID, 10),
 	}
 	retorno := ToString("Teacher", campos)
 	return retorno

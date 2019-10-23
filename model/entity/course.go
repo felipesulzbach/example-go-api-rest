@@ -17,25 +17,25 @@ type Course struct {
 }
 
 // New - Loads a new Course structure.
-func (entidade *Course) New(id int64, name string, description string, registrationDate time.Time) {
-	*entidade = Course{id, name, description, registrationDate}
+func (entity *Course) New(id int64, name string, description string, registrationDate time.Time) {
+	*entity = Course{id, name, description, registrationDate}
 }
 
 // Decoder - Decodes JSON for structure.
-func (entidade *Course) Decoder(jsonStream string) error {
-	if err := json.Unmarshal([]byte(jsonStream), &entidade); err != nil {
+func (entity *Course) Decoder(jsonStream string) error {
+	if err := json.Unmarshal([]byte(jsonStream), &entity); err != nil {
 		return err
 	}
 	return nil
 }
 
 // ToString - Returns string with Course information.
-func (entidade *Course) ToString() string {
+func (entity *Course) ToString() string {
 	campos := map[string]string{
-		"ID":               strconv.FormatInt(entidade.ID, 10),
-		"Name":             entidade.Name,
-		"Description":      entidade.Description,
-		"RegistrationDate": util.FormatDateTime(entidade.RegistrationDate),
+		"ID":               strconv.FormatInt(entity.ID, 10),
+		"Name":             entity.Name,
+		"Description":      entity.Description,
+		"RegistrationDate": util.FormatDateTime(entity.RegistrationDate),
 	}
 	retorno := ToString("Course", campos)
 	return retorno

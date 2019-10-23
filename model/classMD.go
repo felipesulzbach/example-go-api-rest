@@ -4,8 +4,8 @@ import (
 	"github.com/_dev/exemplo-api-rest/model/entity"
 )
 
-// NextIDTurma Retorna o proximo ID.
-func NextIDTurma(db *DB) (int64, error) {
+// NextIDClass - Returns the next ID.
+func NextIDClass(db *DB) (int64, error) {
 	row := db.QueryRow("SELECT (MAX(id) + 1) FROM GO_TST.class")
 
 	var id int64
@@ -16,46 +16,46 @@ func NextIDTurma(db *DB) (int64, error) {
 	return id, nil
 }
 
-// ListarTurma Retorna lista total turmas registrados.
-func ListarTurma(db *DB) ([]*entity.Class, error) {
+// ListClass - Returns total list of registered classes.
+func ListClass(db *DB) ([]*entity.Class, error) {
 	rows, err := db.Query("SELECT * FROM GO_TST.class")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	lista := make([]*entity.Class, 0)
+	list := make([]*entity.Class, 0)
 	for rows.Next() {
 		item := new(entity.Class)
-		err := rows.Scan(&item.ID, &item.IDCurso, &item.DataInicio, &item.DataFim, &item.DataCadastro)
+		err := rows.Scan(&item.ID, &item.CourseID, &item.StartDate, &item.EndDate, &item.RegistrationDate)
 		if err != nil {
 			return nil, err
 		}
-		lista = append(lista, item)
+		list = append(list, item)
 	}
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-	return lista, nil
+	return list, nil
 }
 
-// BuscarTurma Retorna um curso especifico.
-func BuscarTurma(db *DB, id int64) (*entity.Turma, error) {
-	row := db.QueryRow("SELECT * FROM turma WHERE id=$1", id)
+// FindByIDClass - Returns a specific course by ID.
+func FindByIDClass(db *DB, id int64) (*entity.Class, error) {
+	row := db.QueryRow("SELECT * FROM GO_TST.class WHERE id=$1", id)
 
-	item := new(entity.Turma)
-	err := row.Scan(&item.ID, &item.IDCurso, &item.DataInicio, &item.DataFim, &item.DataCadastro)
+	item := new(entity.Class)
+	err := rows.Scan(&item.ID, &item.CourseID, &item.StartDate, &item.EndDate, &item.RegistrationDate)
 	if err != nil {
 		return nil, err
 	}
 	return item, nil
 }
 
-// InserirTurma Insere um novo registro turma na base.
-func InserirTurma(db *DB, entidade entity.Turma) (int64, error) {
-	sqlStatement := "INSERT INTO turma (id, id_curso, data_inicio, data_fim, data_cadastro) VALUES ($1, $2, $3, $4, $5) RETURNING id"
+// InsertClass - Inserts a new class record in the data base.
+func InsertClass(db *DB, entityy entity.Class) (int64, error) {
+	sqlStatement := "INSERT INTO GO_TST.class (id, course_id, start_date, end_date, registration_date) VALUES ($1, $2, $3, $4, $5) RETURNING id"
 	var idretorno int64
-	err := db.QueryRow(sqlStatement, entidade.ID, entidade.IDCurso, entidade.DataInicio, entidade.DataFim, entidade.DataCadastro).Scan(&idretorno)
+	err := db.QueryRow(sqlStatement, entityy.ID, entityy.IDCurso, entityy.DataInicio, entityy.DataFim, entityy.DataCadastro).Scan(&idretorno)
 	if err != nil {
 		return 0, err
 	}
@@ -63,10 +63,10 @@ func InserirTurma(db *DB, entidade entity.Turma) (int64, error) {
 	return idretorno, nil
 }
 
-// AtualizarTurma Atualiza um registro turma da base.
-func AtualizarTurma(db *DB, entidade entity.Turma) error {
-	sqlStatement := "UPDATE turma SET id_curso=$2, data_inicio=$3, data_fim=$4, data_cadastro=$5 WHERE id=$1"
-	_, err := db.Exec(sqlStatement, entidade.ID, entidade.IDCurso, entidade.DataInicio, entidade.DataFim, entidade.DataCadastro)
+// UpdateClass - Updates a base class record.
+func UpdateClass(db *DB, entityy entity.Class) error {
+	sqlStatement := "UPDATE GO_TST.class SET course_id=$2, start_date=$3, end_date=$4, registration_date=$5 WHERE id=$1"
+	_, err := db.Exec(sqlStatement, entityy.ID, entityy.IDCurso, entityy.DataInicio, entityy.DataFim, entityy.DataCadastro)
 	if err != nil {
 		return err
 	}

@@ -18,26 +18,26 @@ type Class struct {
 }
 
 // New - Loads a new Person structure.
-func (entidade *Class) New(id int64, courseID int64, startDate time.Time, endDate time.Time, registrationDate time.Time) {
-	*entidade = Class{id, courseID, startDate, endDate, registrationDate}
+func (entity *Class) New(id int64, courseID int64, startDate time.Time, endDate time.Time, registrationDate time.Time) {
+	*entity = Class{id, courseID, startDate, endDate, registrationDate}
 }
 
 // Decoder - Decodes JSON for structure.
-func (entidade *Class) Decoder(jsonStream string) error {
-	if err := json.Unmarshal([]byte(jsonStream), &entidade); err != nil {
+func (entity *Class) Decoder(jsonStream string) error {
+	if err := json.Unmarshal([]byte(jsonStream), &entity); err != nil {
 		return err
 	}
 	return nil
 }
 
 // ToString - Returns string with Person information.
-func (entidade *Class) ToString() string {
+func (entity *Class) ToString() string {
 	campos := map[string]string{
-		"ID":               strconv.FormatInt(entidade.ID, 10),
-		"CourseID":         strconv.FormatInt(entidade.CourseID, 10),
-		"StartDate":        util.FormatDateTime(entidade.StartDate),
-		"EndDate":          util.FormatDateTime(entidade.EndDate),
-		"RegistrationDate": util.FormatDateTime(entidade.RegistrationDate),
+		"ID":               strconv.FormatInt(entity.ID, 10),
+		"CourseID":         strconv.FormatInt(entity.CourseID, 10),
+		"StartDate":        util.FormatDateTime(entity.StartDate),
+		"EndDate":          util.FormatDateTime(entity.EndDate),
+		"RegistrationDate": util.FormatDateTime(entity.RegistrationDate),
 	}
 	retorno := ToString("Class", campos)
 	return retorno
