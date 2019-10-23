@@ -4,62 +4,62 @@ import (
 	"github.com/_dev/exemplo-api-rest/model/entity"
 )
 
-// ListarAluno Retorna lista total alunos registrados.
-func ListarAluno(db *DB) ([]*entity.Aluno, error) {
-	rows, err := db.Query("SELECT * FROM aluno")
+// NextIDStudent - Returns the next ID.
+func NextIDStudent(db *DB) ([]*entity.Student, error) {
+	rows, err := db.Query("SELECT * FROM GO_TST.student")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	lista := make([]*entity.Aluno, 0)
+	list := make([]*entity.Student, 0)
 	for rows.Next() {
-		item := new(entity.Aluno)
-		err := rows.Scan(&item.IDPessoa, &item.IDTurma)
+		item := new(entity.Student)
+		err := rows.Scan(&item.PersonID, &item.ClassID)
 		if err != nil {
 			return nil, err
 		}
-		lista = append(lista, item)
+		list = append(list, item)
 	}
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-	return lista, nil
+	return list, nil
 }
 
-// BuscarAluno Retorna um aluno especifico.
-func BuscarAluno(db *DB, idPessoa int64) (*entity.Aluno, error) {
-	row := db.QueryRow("SELECT * FROM aluno WHERE id_pessoa=$1", idPessoa)
+// FindByIDStudent - Returns a specific student by ID.
+func FindByIDStudent(db *DB, id int64) (*entity.Student, error) {
+	row := db.QueryRow("SELECT * FROM GO_TST.student WHERE person_id=$1", id)
 
-	item := new(entity.Aluno)
-	err := row.Scan(&item.IDPessoa, &item.IDTurma)
+	item := new(entity.Student)
+	err := row.Scan(&item.PersonID, &item.ClassID)
 	if err != nil {
 		return nil, err
 	}
 	return item, nil
 }
 
-// InserirAluno Insere um novo registro aluno na base.
-func InserirAluno(db *DB, entidade entity.Aluno) (int64, error) {
-	sqlStatement := "INSERT INTO aluno (id_pessoa, id_turma) VALUES ($1, $2) RETURNING id_pessoa"
+// InsertStudent - Inserts a new student record in the data base.
+func InsertStudent(db *DB, entityy entity.Student) (int64, error) {
+	sqlStatement := "INSERT INTO GO_TST.student (person_id, class_id) VALUES ($1, $2) RETURNING person_id"
 
-	var idretorno int64
-	err := db.QueryRow(sqlStatement, entidade.IDPessoa, entidade.IDTurma).Scan(&idretorno)
+	var returnedID int64
+	err := db.QueryRow(sqlStatement, entityy.PersonID, entityy.ClassID).Scan(&returnedID)
 	if err != nil {
 		return 0, err
 	}
 
-	return idretorno, nil
+	return returnedID, nil
 }
 
-// AtualizarAluno Atualiza um registro aluno da base.
-func AtualizarAluno(db *DB, entidade entity.Aluno, entidadepessoa entity.Pessoa) error {
-	sqlStatement := "UPDATE aluno SET id_turma=$2 WHERE id_pessoa=$1"
-	_, err := db.Exec(sqlStatement, entidade.IDPessoa, entidade.IDTurma)
+// UpdateStudent - Updates a base student record.
+func UpdateStudent(db *DB, entityy entity.Student, person entity.Person) error {
+	sqlStatement := "UPDATE GO_TST.student SET class_id=$2 WHERE person_id=$1"
+	_, err := db.Exec(sqlStatement, entityy.PersonID, entityy.ClassID)
 	if err != nil {
 		return err
 	}
-	if err = AtualizarPessoa(db, entidadepessoa); err != nil {
+	if err = UpdatePerson(db, person); err != nil {
 		return err
 	}
 	return nil

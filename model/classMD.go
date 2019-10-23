@@ -16,8 +16,8 @@ func NextIDClass(db *DB) (int64, error) {
 	return id, nil
 }
 
-// ListClass - Returns total list of registered classes.
-func ListClass(db *DB) ([]*entity.Class, error) {
+// FindAllClass - Returns total list of registered classes.
+func FindAllClass(db *DB) ([]*entity.Class, error) {
 	rows, err := db.Query("SELECT * FROM GO_TST.class")
 	if err != nil {
 		return nil, err
@@ -39,12 +39,12 @@ func ListClass(db *DB) ([]*entity.Class, error) {
 	return list, nil
 }
 
-// FindByIDClass - Returns a specific course by ID.
+// FindByIDClass - Returns a specific class by ID.
 func FindByIDClass(db *DB, id int64) (*entity.Class, error) {
 	row := db.QueryRow("SELECT * FROM GO_TST.class WHERE id=$1", id)
 
 	item := new(entity.Class)
-	err := rows.Scan(&item.ID, &item.CourseID, &item.StartDate, &item.EndDate, &item.RegistrationDate)
+	err := row.Scan(&item.ID, &item.CourseID, &item.StartDate, &item.EndDate, &item.RegistrationDate)
 	if err != nil {
 		return nil, err
 	}
@@ -54,19 +54,19 @@ func FindByIDClass(db *DB, id int64) (*entity.Class, error) {
 // InsertClass - Inserts a new class record in the data base.
 func InsertClass(db *DB, entityy entity.Class) (int64, error) {
 	sqlStatement := "INSERT INTO GO_TST.class (id, course_id, start_date, end_date, registration_date) VALUES ($1, $2, $3, $4, $5) RETURNING id"
-	var idretorno int64
-	err := db.QueryRow(sqlStatement, entityy.ID, entityy.IDCurso, entityy.DataInicio, entityy.DataFim, entityy.DataCadastro).Scan(&idretorno)
+	var returnedID int64
+	err := db.QueryRow(sqlStatement, entityy.ID, entityy.CourseID, entityy.StartDate, entityy.EndDate, entityy.RegistrationDate).Scan(&returnedID)
 	if err != nil {
 		return 0, err
 	}
 
-	return idretorno, nil
+	return returnedID, nil
 }
 
 // UpdateClass - Updates a base class record.
 func UpdateClass(db *DB, entityy entity.Class) error {
 	sqlStatement := "UPDATE GO_TST.class SET course_id=$2, start_date=$3, end_date=$4, registration_date=$5 WHERE id=$1"
-	_, err := db.Exec(sqlStatement, entityy.ID, entityy.IDCurso, entityy.DataInicio, entityy.DataFim, entityy.DataCadastro)
+	_, err := db.Exec(sqlStatement, entityy.ID, entityy.CourseID, entityy.StartDate, entityy.EndDate, entityy.RegistrationDate)
 	if err != nil {
 		return err
 	}

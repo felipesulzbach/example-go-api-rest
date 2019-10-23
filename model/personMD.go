@@ -4,9 +4,9 @@ import (
 	"github.com/_dev/exemplo-api-rest/model/entity"
 )
 
-// NextIDPessoa Retorna o proximo ID.
-func NextIDPessoa(db *DB) (int64, error) {
-	row := db.QueryRow("SELECT (MAX(id) + 1) FROM pessoa")
+// NextIDPerson - Returns the next ID.
+func NextIDPerson(db *DB) (int64, error) {
+	row := db.QueryRow("SELECT (MAX(id) + 1) FROM GO_TST.person")
 
 	var id int64
 	err := row.Scan(&id)
@@ -16,57 +16,57 @@ func NextIDPessoa(db *DB) (int64, error) {
 	return id, nil
 }
 
-// ListarPessoa Retorna lista total pessoas registradas.
-func ListarPessoa(db *DB) ([]*entity.Pessoa, error) {
-	rows, err := db.Query("SELECT * FROM pessoa")
+// FindAllPerson - Returns total list of registered persons.
+func FindAllPerson(db *DB) ([]*entity.Person, error) {
+	rows, err := db.Query("SELECT * FROM GO_TST.person")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	lista := make([]*entity.Pessoa, 0)
+	list := make([]*entity.Person, 0)
 	for rows.Next() {
-		item := new(entity.Pessoa)
-		err := rows.Scan(&item.ID, &item.Nome, &item.NumeroCpf, &item.NumeroCelular, &item.Cidade, &item.NumeroCep, &item.Endereco, &item.DataCadastro)
+		item := new(entity.Person)
+		err := rows.Scan(&item.ID, &item.Name, &item.Cpf, &item.CellPhone, &item.City, &item.ZipCode, &item.Address, &item.RegistrationDate)
 		if err != nil {
 			return nil, err
 		}
-		lista = append(lista, item)
+		list = append(list, item)
 	}
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-	return lista, nil
+	return list, nil
 }
 
-// BuscarPessoa Retorna um pessoa especifico.
-func BuscarPessoa(db *DB, id int64) (*entity.Pessoa, error) {
-	row := db.QueryRow("SELECT * FROM pessoa WHERE id=$1", id)
+// FindByIDPerson - Returns a specific person by ID.
+func FindByIDPerson(db *DB, id int64) (*entity.Person, error) {
+	row := db.QueryRow("SELECT * FROM GO_TST.person WHERE id=$1", id)
 
-	item := new(entity.Pessoa)
-	err := row.Scan(&item.ID, &item.Nome, &item.NumeroCpf, &item.NumeroCelular, &item.Cidade, &item.NumeroCep, &item.Endereco, &item.DataCadastro)
+	item := new(entity.Person)
+	err := row.Scan(&item.ID, &item.Name, &item.Cpf, &item.CellPhone, &item.City, &item.ZipCode, &item.Address, &item.RegistrationDate)
 	if err != nil {
 		return nil, err
 	}
 	return item, nil
 }
 
-// InserirPessoa Insere um novo registro pessoa na base.
-func InserirPessoa(db *DB, entidade entity.Pessoa) (int64, error) {
-	sqlStatement := "INSERT INTO pessoa (id, nome, numero_cpf, numero_celular, cidade, numero_cep, endereco, data_cadastro) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id"
-	var idretorno int64
-	err := db.QueryRow(sqlStatement, entidade.ID, entidade.Nome, entidade.NumeroCpf, entidade.NumeroCelular, entidade.Cidade, entidade.NumeroCep, entidade.Endereco, entidade.DataCadastro).Scan(&idretorno)
+// InsertPerson - Inserts a new person record in the data base.
+func InsertPerson(db *DB, entityy entity.Person) (int64, error) {
+	sqlStatement := "INSERT INTO GO_TST.person (id, name, cpf, cell_phone, city, zip_code, address, registration_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id"
+	var returnedID int64
+	err := db.QueryRow(sqlStatement, entityy.ID, entityy.Name, entityy.Cpf, entityy.CellPhone, entityy.City, entityy.ZipCode, entityy.Address, entityy.RegistrationDate).Scan(&returnedID)
 	if err != nil {
 		return 0, err
 	}
 
-	return idretorno, nil
+	return returnedID, nil
 }
 
-// AtualizarPessoa Atualiza um registro pessoa da base.
-func AtualizarPessoa(db *DB, entidade entity.Pessoa) error {
-	sqlStatement := "UPDATE pessoa SET nome=$2, numero_cpf=$3, numero_celular=$4, cidade=$5, numero_cep=$6, endereco=$7, data_cadastro=$8 WHERE id=$1"
-	_, err := db.Exec(sqlStatement, entidade.ID, entidade.Nome, entidade.NumeroCpf, entidade.NumeroCelular, entidade.Cidade, entidade.NumeroCep, entidade.Endereco, entidade.DataCadastro)
+// UpdatePerson - Updates a base class record.
+func UpdatePerson(db *DB, entityy entity.Person) error {
+	sqlStatement := "UPDATE GO_TST.person SET name=$2, cpf=$3, cell_phone=$4, city=$5, zip_code=$6, address=$7, registration_date=$8 WHERE id=$1"
+	_, err := db.Exec(sqlStatement, entityy.ID, entityy.Name, entityy.Cpf, entityy.CellPhone, entityy.City, entityy.ZipCode, entityy.Address, entityy.RegistrationDate)
 	if err != nil {
 		return err
 	}

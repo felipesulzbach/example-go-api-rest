@@ -4,9 +4,9 @@ import (
 	"github.com/_dev/exemplo-api-rest/model/entity"
 )
 
-// NextIDCurso Retorna o proximo ID.
-func NextIDCurso(db *DB) (int64, error) {
-	row := db.QueryRow("SELECT (MAX(id) + 1) FROM curso")
+// NextIDCourse - Returns the next ID.
+func NextIDCourse(db *DB) (int64, error) {
+	row := db.QueryRow("SELECT (MAX(id) + 1) FROM GO_TST.course")
 
 	var id int64
 	err := row.Scan(&id)
@@ -16,57 +16,57 @@ func NextIDCurso(db *DB) (int64, error) {
 	return id, nil
 }
 
-// ListarCurso Retorna lista total cursos registrados.
-func ListarCurso(db *DB) ([]*entity.Curso, error) {
-	rows, err := db.Query("SELECT * FROM curso")
+// FindAllCourse - Returns total list of registered classes.
+func FindAllCourse(db *DB) ([]*entity.Course, error) {
+	rows, err := db.Query("SELECT * FROM GO_TST.course")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	lista := make([]*entity.Curso, 0)
+	list := make([]*entity.Course, 0)
 	for rows.Next() {
-		item := new(entity.Curso)
-		err := rows.Scan(&item.ID, &item.Nome, &item.Descricao, &item.DataCadastro)
+		item := new(entity.Course)
+		err := rows.Scan(&item.ID, &item.Name, &item.Description, &item.RegistrationDate)
 		if err != nil {
 			return nil, err
 		}
-		lista = append(lista, item)
+		list = append(list, item)
 	}
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-	return lista, nil
+	return list, nil
 }
 
-// BuscarCurso Retorna um curso especifico.
-func BuscarCurso(db *DB, id int64) (*entity.Curso, error) {
-	row := db.QueryRow("SELECT * FROM curso WHERE id=$1", id)
+// FindByIDCourse - Returns a specific course by ID.
+func FindByIDCourse(db *DB, id int64) (*entity.Course, error) {
+	row := db.QueryRow("SELECT * FROM GO_TST.course WHERE id=$1", id)
 
-	item := new(entity.Curso)
-	err := row.Scan(&item.ID, &item.Nome, &item.Descricao, &item.DataCadastro)
+	item := new(entity.Course)
+	err := row.Scan(&item.ID, &item.Name, &item.Description, &item.RegistrationDate)
 	if err != nil {
 		return nil, err
 	}
 	return item, nil
 }
 
-// InserirCurso Insere um novo registro curso na base.
-func InserirCurso(db *DB, entidade entity.Curso) (int64, error) {
-	sqlStatement := "INSERT INTO curso (id, nome, descricao, data_cadastro) VALUES ($1, $2, $3, $4) RETURNING id"
-	var idretorno int64
-	err := db.QueryRow(sqlStatement, entidade.ID, entidade.Nome, entidade.Descricao, entidade.DataCadastro).Scan(&idretorno)
+// InsertCourse - Inserts a new class record in the data base.
+func InsertCourse(db *DB, entityy entity.Course) (int64, error) {
+	sqlStatement := "INSERT INTO GO_TST.course (id, name, description, registration_date) VALUES ($1, $2, $3, $4) RETURNING id"
+	var returnedID int64
+	err := db.QueryRow(sqlStatement, entityy.ID, entityy.Name, entityy.Description, entityy.RegistrationDate).Scan(&returnedID)
 	if err != nil {
 		return 0, err
 	}
 
-	return idretorno, nil
+	return returnedID, nil
 }
 
-// AtualizarCurso Atualiza um registro curso da base.
-func AtualizarCurso(db *DB, entidade entity.Curso) error {
-	sqlStatement := "UPDATE curso SET nome=$2, descricao=$3, data_cadastro=$4 WHERE id=$1"
-	_, err := db.Exec(sqlStatement, entidade.ID, entidade.Nome, entidade.Descricao, entidade.DataCadastro)
+// UpdateCourse - Updates a base class record.
+func UpdateCourse(db *DB, entityy entity.Course) error {
+	sqlStatement := "UPDATE GO_TST.course SET name=$2, description=$3, registration_date=$4 WHERE id=$1"
+	_, err := db.Exec(sqlStatement, entityy.ID, entityy.Name, entityy.Description, entityy.RegistrationDate)
 	if err != nil {
 		return err
 	}

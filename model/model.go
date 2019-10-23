@@ -16,7 +16,7 @@ type DB struct {
 	*sql.DB
 }
 
-// NewDB Abre nova conexao com o PostgreSQL.
+// NewDB - Opens new PostgreSQL connection.
 func NewDB(dataSourceName string) (*DB, error) {
 	db, err := sql.Open("postgres", dataSourceName)
 	if err != nil {
@@ -28,20 +28,20 @@ func NewDB(dataSourceName string) (*DB, error) {
 	return &DB{db}, nil
 }
 
-// CloseDB Fecha a conexao com o PostgreSQL.
+// CloseDB - Closes the connection to PostgreSQL.
 func CloseDB(db *DB) {
 	defer db.Close()
 }
 
-// Remover Remove um registro da base.
-func Remover(db *DB, entity string, coluna string, valor int64) error {
+// Delete - Removes a record from the base.
+func Delete(db *DB, entity string, column string, value int64) error {
 	var sqlStatement bytes.Buffer
-	sqlStatement.WriteString("DELETE FROM ")
+	sqlStatement.WriteString("DELETE FROM GO_TST.")
 	sqlStatement.WriteString(entity)
 	sqlStatement.WriteString(" WHERE ")
-	sqlStatement.WriteString(coluna)
+	sqlStatement.WriteString(column)
 	sqlStatement.WriteString("=$1")
-	_, err := db.Exec(sqlStatement.String(), valor)
+	_, err := db.Exec(sqlStatement.String(), value)
 	if err != nil {
 		return err
 	}
