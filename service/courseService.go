@@ -15,39 +15,39 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// ListarCurso Retorna lista total cursos registrados.
+// ListarCurso Retorna list total cursos registrados.
 func ListarCurso(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
-		http.Error(w, http.StatusText(405), 405)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
 		return
 	}
 
 	//	env := &Env{db}
 
-	//	lista, err := env.db.ListarCurso()
-	lista, err := model.ListarCurso(db)
+	//	list, err := env.db.ListarCurso()
+	list, err := model.ListarCurso(db)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
 	}
 
-	for _, item := range lista {
+	for _, item := range list {
 		log.Println(item.ToString())
 	}
 
 	model.CloseDB(db)
-	json.NewEncoder(w).Encode(lista)
+	json.NewEncoder(w).Encode(list)
 }
 
 // BuscarCurso Retorna um curso especifico.
 func BuscarCurso(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
-		http.Error(w, http.StatusText(405), 405)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
 		return
 	}
@@ -56,20 +56,20 @@ func BuscarCurso(w http.ResponseWriter, r *http.Request) {
 	//id := r.FormValue("id")
 	id, err := strconv.ParseInt(params["id"], 10, 64)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
 	}
 
-	entidade, err := model.BuscarCurso(db, id)
+	entityy, err := model.BuscarCurso(db, id)
 	switch {
 	case err == sql.ErrNoRows:
-		var descerro bytes.Buffer
-		descerro.WriteString("ERROR: Nenhum registro encontrado para id=")
-		descerro.WriteString(strconv.FormatInt(id, 10))
-		log.Println(descerro.String())
-		json.NewEncoder(w).Encode(descerro.String())
+		var errorDesc bytes.Buffer
+		errorDesc.WriteString("ERROR: No records found for id=")
+		errorDesc.WriteString(strconv.FormatInt(id, 10))
+		log.Println(errorDesc.String())
+		json.NewEncoder(w).Encode(errorDesc.String())
 		model.CloseDB(db)
 		return
 	case err != nil:
@@ -79,23 +79,23 @@ func BuscarCurso(w http.ResponseWriter, r *http.Request) {
 	default:
 	}
 
-	log.Println(entidade.ToString())
+	log.Println(entityy.ToString())
 	model.CloseDB(db)
-	json.NewEncoder(w).Encode(entidade)
+	json.NewEncoder(w).Encode(entityy)
 }
 
 // InserirCurso Insere um novo registro curso na base.
 func InserirCurso(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
-		http.Error(w, http.StatusText(405), 405)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
 		return
 	}
 
 	id, err := model.NextIDCurso(db)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
@@ -106,12 +106,12 @@ func InserirCurso(w http.ResponseWriter, r *http.Request) {
 	descricao := params["descricao"]
 	dataCadastro := util.StringToTime(params["datacadastro"])
 
-	var entidade entity.Curso
-	entidade.New(id, nome, descricao, dataCadastro)
+	var entityy entity.Curso
+	entityy.New(id, nome, descricao, dataCadastro)
 
-	idRetorno, err := model.InserirCurso(db, entidade)
+	idRetorno, err := model.InserirCurso(db, entityy)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
@@ -124,7 +124,7 @@ func InserirCurso(w http.ResponseWriter, r *http.Request) {
 func AtualizarCurso(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
-		http.Error(w, http.StatusText(405), 405)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
 		return
 	}
@@ -132,7 +132,7 @@ func AtualizarCurso(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.ParseInt(params["id"], 10, 64)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
@@ -141,11 +141,11 @@ func AtualizarCurso(w http.ResponseWriter, r *http.Request) {
 	descricao := params["descricao"]
 	dataCadastro := util.StringToTime(params["datacadastro"])
 
-	var entidade entity.Curso
-	entidade.New(id, nome, descricao, dataCadastro)
+	var entityy entity.Curso
+	entityy.New(id, nome, descricao, dataCadastro)
 
-	if err = model.AtualizarCurso(db, entidade); err != nil {
-		http.Error(w, http.StatusText(500), 500)
+	if err = model.AtualizarCurso(db, entityy); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
@@ -157,13 +157,13 @@ func AtualizarCurso(w http.ResponseWriter, r *http.Request) {
 func RemoverCurso(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
-		http.Error(w, http.StatusText(405), 405)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
 		return
 	}
 
 	if err := Remover(w, r, db, "curso", "id", "id"); err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return

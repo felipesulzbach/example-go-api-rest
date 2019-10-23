@@ -15,36 +15,36 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// ListarProfessor Retorna lista total professores registrados.
+// ListarProfessor Retorna list total professores registrados.
 func ListarProfessor(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
-		http.Error(w, http.StatusText(405), 405)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
 		return
 	}
 
-	lista, err := model.ListarProfessor(db)
+	list, err := model.ListarProfessor(db)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
 	}
 
-	for _, item := range lista {
+	for _, item := range list {
 		log.Println(item.ToString())
 	}
 
 	model.CloseDB(db)
-	json.NewEncoder(w).Encode(lista)
+	json.NewEncoder(w).Encode(list)
 }
 
 // BuscarProfessor Retorna um professor especifico.
 func BuscarProfessor(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
-		http.Error(w, http.StatusText(405), 405)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
 		return
 	}
@@ -52,20 +52,20 @@ func BuscarProfessor(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	idPessoa, err := strconv.ParseInt(params["idPessoa"], 10, 64)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
 	}
 
-	entidade, err := model.BuscarProfessor(db, idPessoa)
+	entityy, err := model.BuscarProfessor(db, idPessoa)
 	switch {
 	case err == sql.ErrNoRows:
-		var descerro bytes.Buffer
-		descerro.WriteString("ERROR: Nenhum registro encontrado para idPessoa=")
-		descerro.WriteString(strconv.FormatInt(idPessoa, 10))
-		log.Println(descerro.String())
-		json.NewEncoder(w).Encode(descerro.String())
+		var errorDesc bytes.Buffer
+		errorDesc.WriteString("ERROR: No records found for id=")
+		errorDesc.WriteString(strconv.FormatInt(idPessoa, 10))
+		log.Println(errorDesc.String())
+		json.NewEncoder(w).Encode(errorDesc.String())
 		model.CloseDB(db)
 		return
 	case err != nil:
@@ -75,23 +75,23 @@ func BuscarProfessor(w http.ResponseWriter, r *http.Request) {
 	default:
 	}
 
-	log.Println(entidade.ToString())
+	log.Println(entityy.ToString())
 	model.CloseDB(db)
-	json.NewEncoder(w).Encode(entidade)
+	json.NewEncoder(w).Encode(entityy)
 }
 
 // InserirProfessor Insere um novo registro professor na base.
 func InserirProfessor(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
-		http.Error(w, http.StatusText(405), 405)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
 		return
 	}
 
 	idpessoa, err := model.NextIDPessoa(db)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
@@ -107,20 +107,20 @@ func InserirProfessor(w http.ResponseWriter, r *http.Request) {
 	dataCadastro := util.StringToTime(params["datacadastro"])
 	idcurso, err := strconv.ParseInt(params["idcurso"], 10, 64)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
 	}
 
-	entidadeCurso, err := model.BuscarCurso(db, idcurso)
+	entityyCurso, err := model.BuscarCurso(db, idcurso)
 	switch {
 	case err == sql.ErrNoRows:
-		var descerro bytes.Buffer
-		descerro.WriteString("ERROR: Nenhum registro encontrado para idcurso=")
-		descerro.WriteString(strconv.FormatInt(idcurso, 10))
-		log.Println(descerro.String())
-		json.NewEncoder(w).Encode(descerro.String())
+		var errorDesc bytes.Buffer
+		errorDesc.WriteString("ERROR: No records found for idcurso=")
+		errorDesc.WriteString(strconv.FormatInt(idcurso, 10))
+		log.Println(errorDesc.String())
+		json.NewEncoder(w).Encode(errorDesc.String())
 		model.CloseDB(db)
 		return
 	case err != nil:
@@ -134,17 +134,17 @@ func InserirProfessor(w http.ResponseWriter, r *http.Request) {
 	pessoa.New(idpessoa, nome, numerocpf, numerocelular, cidade, numerocep, endereco, dataCadastro)
 	idpessoaRetorno, err := model.InserirPessoa(db, pessoa)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
 	}
 
-	var entidade entity.Professor
-	entidade.New(idpessoaRetorno, entidadeCurso.ID)
-	idprofessorRetorno, err := model.InserirProfessor(db, entidade)
+	var entityy entity.Professor
+	entityy.New(idpessoaRetorno, entityyCurso.ID)
+	idprofessorRetorno, err := model.InserirProfessor(db, entityy)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
@@ -157,7 +157,7 @@ func InserirProfessor(w http.ResponseWriter, r *http.Request) {
 func AtualizarProfessor(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
-		http.Error(w, http.StatusText(405), 405)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
 		return
 	}
@@ -165,14 +165,14 @@ func AtualizarProfessor(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	idpessoa, err := strconv.ParseInt(params["idpessoa"], 10, 64)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
 	}
 	idcurso, err := strconv.ParseInt(params["idcurso"], 10, 64)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
@@ -185,13 +185,13 @@ func AtualizarProfessor(w http.ResponseWriter, r *http.Request) {
 	endereco := params["endereco"]
 	datacadastro := util.StringToTime(params["datacadastro"])
 
-	var entidade entity.Professor
-	entidade.New(idpessoa, idcurso)
-	var entidadepessoa entity.Pessoa
-	entidadepessoa.New(idpessoa, nome, numerocpf, numerocelular, cidade, numerocep, endereco, datacadastro)
+	var entityy entity.Professor
+	entityy.New(idpessoa, idcurso)
+	var entityypessoa entity.Pessoa
+	entityypessoa.New(idpessoa, nome, numerocpf, numerocelular, cidade, numerocep, endereco, datacadastro)
 
-	if err = model.AtualizarProfessor(db, entidade, entidadepessoa); err != nil {
-		http.Error(w, http.StatusText(500), 500)
+	if err = model.AtualizarProfessor(db, entityy, entityypessoa); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
@@ -203,20 +203,20 @@ func AtualizarProfessor(w http.ResponseWriter, r *http.Request) {
 func RemoverProfessor(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
-		http.Error(w, http.StatusText(405), 405)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
 		return
 	}
 
 	if err := Remover(w, r, db, "professor", "id_pessoa", "idpessoa"); err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
 	}
 
 	if err := Remover(w, r, db, "pessoa", "id", "idpessoa"); err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return

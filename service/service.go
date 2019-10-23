@@ -9,21 +9,20 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// DataSourcePostgre postgres://user:pass@localhost/bookstore?sslmode=disable
-//const DataSourcePostgre = "postgres://postgres:admin@localhost/teste_db?sslmode=disable"
-const DataSourcePostgre = "postgres://postgres:postgres@localhost/teste_db?sslmode=disable"
+// DataSourcePostgre - URI of the database.
+const DataSourcePostgre = "postgres://postgres:postgres@localhost/go_rest_db?sslmode=disable"
 
 //type Env struct{ db model.Datastore }
 
-// Remover Remove um registro da base.
-func Remover(w http.ResponseWriter, r *http.Request, db *model.DB, entidade string, coluna string, parametro string) error {
+// Delete - Removes a record from the base.
+func Delete(w http.ResponseWriter, r *http.Request, db *model.DB, entity string, column string, parametter string) error {
 	params := mux.Vars(r)
-	id, err := strconv.ParseInt(params[parametro], 10, 64)
+	id, err := strconv.ParseInt(params[parametter], 10, 64)
 	if err != nil {
 		return err
 	}
 
-	if err = model.Remover(db, entidade, coluna, id); err != nil {
+	if err = model.Delete(db, entity, column, id); err != nil {
 		return err
 	}
 	return nil

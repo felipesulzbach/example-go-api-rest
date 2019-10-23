@@ -22,17 +22,16 @@ import (
 )
 
 func main() {
-	serverConfigure()
+	router := configurarRotas()
+	serverConfigure(router)
 	//exampleDecoderJSON()
 }
 
-func serverConfigure() {
+func serverConfigure(router *mux.Router) {
 	log.Println("Server Start!")
 	var wait time.Duration
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "he duration for which the server normally expects existing connections to end - e.g. 15s ou 1m")
 	flag.Parse()
-
-	router := configurarRotas()
 
 	srv := &http.Server{
 		Addr:         "localhost:8000",
@@ -70,14 +69,14 @@ func configurarRotas() *mux.Router {
 	subrouterCurso.Path("/").Queries("id", "{id}").HandlerFunc(service.RemoverCurso).Methods("DELETE").Name("RemoverCurso")
 
 	subrouterTurma := router.PathPrefix("/class").Subrouter()
-	subrouterTurma.Path("").HandlerFunc(service.ListarTurma).Methods("GET")
-	subrouterTurma.Path("/").Queries("id", "{id}").HandlerFunc(service.BuscarTurma).Methods("GET").Name("BuscarTurma")
-	subrouterTurma.Path("/").Queries("courseID", "{courseID}", "startDate", "{startDate}", "endDate", "{endDate}", "registrationDate", "{registrationDate}").HandlerFunc(service.InserirTurma).Methods("POST").Name("InserirTurma")
-	subrouterTurma.Path("/").Queries("id", "{id}", "courseID", "{courseID}", "startDate", "{startDate}", "endDate", "{endDate}", "registrationDate", "{registrationDate}").HandlerFunc(service.AtualizarTurma).Methods("PUT").Name("AtualizarTurma")
-	subrouterTurma.Path("/").Queries("id", "{id}").HandlerFunc(service.RemoverTurma).Methods("DELETE").Name("RemoverTurma")
+	subrouterTurma.Path("").HandlerFunc(service.FindAllClass).Methods("GET").Name("FindAllClass")
+	subrouterTurma.Path("/").Queries("id", "{id}").HandlerFunc(service.FindByIDClass).Methods("GET").Name("FindByIDClass")
+	subrouterTurma.Path("/").Queries("courseID", "{courseID}", "startDate", "{startDate}", "endDate", "{endDate}", "registrationDate", "{registrationDate}").HandlerFunc(service.InsertClass).Methods("POST").Name("InsertClass")
+	subrouterTurma.Path("/").Queries("id", "{id}", "courseID", "{courseID}", "startDate", "{startDate}", "endDate", "{endDate}", "registrationDate", "{registrationDate}").HandlerFunc(service.UpdateClass).Methods("PUT").Name("UpdateClass")
+	subrouterTurma.Path("/").Queries("id", "{id}").HandlerFunc(service.DeleteClass).Methods("DELETE").Name("DeleteClass")
 
 	subrouterPessoa := router.PathPrefix("/person").Subrouter()
-	subrouterPessoa.Path("").HandlerFunc(service.ListarPessoa).Methods("GET")
+	subrouterPessoa.Path("").HandlerFunc(service.ListarPessoa).Methods("GET").Name("FindAllPerson")
 
 	subrouterAluno := router.PathPrefix("/student").Subrouter()
 	subrouterAluno.Path("").HandlerFunc(service.ListarAluno).Methods("GET")
