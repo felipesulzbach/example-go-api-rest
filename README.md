@@ -19,6 +19,8 @@ ___
   > go get -u github.com/gorilla/mux
   - Install the [Postgres Driver](https://github.com/lib/pq):
   > go get github.com/lib/pq
+  - Install the [go-i18n](https://github.com/nicksnyder/go-i18n)
+  > go get -u github.com/nicksnyder/go-i18n/v2/goi18n
 
 
 ## Data base
