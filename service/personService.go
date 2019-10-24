@@ -8,8 +8,8 @@ import (
 	"github.com/_dev/exemplo-api-rest/model"
 )
 
-// ListarPessoa Retorna list total pessoas registradas.
-func ListarPessoa(w http.ResponseWriter, r *http.Request) {
+// FindAllPerson - Returns total list of registered persons.
+func FindAllPerson(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -17,7 +17,7 @@ func ListarPessoa(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	list, err := model.ListarPessoa(db)
+	list, err := model.FindAllPerson(db)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)

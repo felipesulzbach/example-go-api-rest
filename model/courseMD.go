@@ -16,7 +16,7 @@ func NextIDCourse(db *DB) (int64, error) {
 	return id, nil
 }
 
-// FindAllCourse - Returns total list of registered classes.
+// FindAllCourse - Returns total list of registered courses.
 func FindAllCourse(db *DB) ([]*entity.Course, error) {
 	rows, err := db.Query("SELECT * FROM GO_TST.course")
 	if err != nil {

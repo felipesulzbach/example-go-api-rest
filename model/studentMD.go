@@ -4,6 +4,29 @@ import (
 	"github.com/_dev/exemplo-api-rest/model/entity"
 )
 
+// FindAllStudent - Returns total list of registered students.
+func FindAllStudent(db *DB) ([]*entity.Student, error) {
+	rows, err := db.Query("SELECT * FROM GO_TST.student")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	list := make([]*entity.Student, 0)
+	for rows.Next() {
+		item := new(entity.Student)
+		err := rows.Scan(&item.PersonID, &item.ClassID)
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, item)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
 // NextIDStudent - Returns the next ID.
 func NextIDStudent(db *DB) ([]*entity.Student, error) {
 	rows, err := db.Query("SELECT * FROM GO_TST.student")
