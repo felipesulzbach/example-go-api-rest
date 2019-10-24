@@ -109,7 +109,7 @@ func InsertCourse(w http.ResponseWriter, r *http.Request) {
 	var entityy entity.Course
 	entityy.New(id, name, description, dataCadastro)
 
-	idRetorno, err := model.InsertCourse(db, entityy)
+	idReturned, err := model.InsertCourse(db, entityy)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
@@ -117,7 +117,7 @@ func InsertCourse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	model.CloseDB(db)
-	json.NewEncoder(w).Encode(idRetorno)
+	json.NewEncoder(w).Encode(idReturned)
 }
 
 // UpdateCourse - Updates a base course record.

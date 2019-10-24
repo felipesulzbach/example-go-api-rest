@@ -142,7 +142,7 @@ func InsertStudent(w http.ResponseWriter, r *http.Request) {
 
 	var entityy entity.Student
 	entityy.New(personIDReturn, entityyClass.ID)
-	idStudantReturn, err := model.InserirStudent(db, entityy)
+	idReturned, err := model.InsertStudent(db, entityy)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
@@ -150,11 +150,11 @@ func InsertStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	model.CloseDB(db)
-	json.NewEncoder(w).Encode(idStudantReturn)
+	json.NewEncoder(w).Encode(idReturned)
 }
 
-// AtualizarStudent Atualiza um registro aluno da base.
-func AtualizarStudent(w http.ResponseWriter, r *http.Request) {
+// UpdateStudent - Updates a base student record.
+func UpdateStudent(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -187,10 +187,10 @@ func AtualizarStudent(w http.ResponseWriter, r *http.Request) {
 
 	var entityy entity.Student
 	entityy.New(personID, classID)
-	var entityyperson entity.Pessoa
+	var entityyperson entity.Person
 	entityyperson.New(personID, name, cpf, cellPhone, city, zipCode, address, registrationDate)
 
-	if err = model.AtualizarStudent(db, entityy, entityyperson); err != nil {
+	if err = model.UpdateStudent(db, entityy, entityyperson); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
@@ -199,8 +199,8 @@ func AtualizarStudent(w http.ResponseWriter, r *http.Request) {
 	model.CloseDB(db)
 }
 
-// RemoverStudent Remove um registro aluno da base.
-func RemoverStudent(w http.ResponseWriter, r *http.Request) {
+// DeleteStudent - Removes a record from the base.
+func DeleteStudent(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -208,14 +208,14 @@ func RemoverStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := Remover(w, r, db, "aluno", "id_person", "personID"); err != nil {
+	if err := Delete(w, r, db, "student", "id_person", "personID"); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
 	}
 
-	if err := Remover(w, r, db, "person", "id", "personID"); err != nil {
+	if err := Delete(w, r, db, "person", "id", "personID"); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)

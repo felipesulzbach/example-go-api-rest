@@ -15,8 +15,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// ListarProfessor Retorna list total professores registrados.
-func ListarProfessor(w http.ResponseWriter, r *http.Request) {
+// FindAllTeacher - Returns total list of registered teachers.
+func FindAllTeacher(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -24,7 +24,7 @@ func ListarProfessor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	list, err := model.ListarProfessor(db)
+	list, err := model.FindAllTeacher(db)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
@@ -40,8 +40,8 @@ func ListarProfessor(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(list)
 }
 
-// BuscarProfessor Retorna um professor especifico.
-func BuscarProfessor(w http.ResponseWriter, r *http.Request) {
+// FindByIDTeacher - Returns a specific teacher by ID.
+func FindByIDTeacher(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -50,7 +50,7 @@ func BuscarProfessor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := mux.Vars(r)
-	idPessoa, err := strconv.ParseInt(params["idPessoa"], 10, 64)
+	id, err := strconv.ParseInt(params["id"], 10, 64)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
@@ -58,12 +58,12 @@ func BuscarProfessor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entityy, err := model.BuscarProfessor(db, idPessoa)
+	entityy, err := model.FindByIDTeacher(db, id)
 	switch {
 	case err == sql.ErrNoRows:
 		var errorDesc bytes.Buffer
 		errorDesc.WriteString("ERROR: No records found for id=")
-		errorDesc.WriteString(strconv.FormatInt(idPessoa, 10))
+		errorDesc.WriteString(strconv.FormatInt(id, 10))
 		log.Println(errorDesc.String())
 		json.NewEncoder(w).Encode(errorDesc.String())
 		model.CloseDB(db)
@@ -80,8 +80,8 @@ func BuscarProfessor(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(entityy)
 }
 
-// InserirProfessor Insere um novo registro professor na base.
-func InserirProfessor(w http.ResponseWriter, r *http.Request) {
+// InsertTeacher - Inserts a new class record in the data base.
+func InsertTeacher(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -89,7 +89,7 @@ func InserirProfessor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idpessoa, err := model.NextIDPessoa(db)
+	personID, err := model.NextIDPerson(db)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
@@ -98,14 +98,14 @@ func InserirProfessor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := mux.Vars(r)
-	nome := params["nome"]
-	numerocpf := params["numerocpf"]
-	numerocelular := params["numerocelular"]
-	cidade := params["cidade"]
-	numerocep := params["numerocep"]
-	endereco := params["endereco"]
-	dataCadastro := util.StringToTime(params["datacadastro"])
-	idcurso, err := strconv.ParseInt(params["idcurso"], 10, 64)
+	name := params["name"]
+	cpf := params["cpf"]
+	cellPhone := params["cellPhone"]
+	city := params["city"]
+	zipCode := params["zipCode"]
+	address := params["address"]
+	dataCadastro := util.StringToTime(params["registrationDate"])
+	courseID, err := strconv.ParseInt(params["courseID"], 10, 64)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
@@ -113,12 +113,12 @@ func InserirProfessor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entityyCurso, err := model.BuscarCurso(db, idcurso)
+	entityyCourse, err := model.FindByIDCourse(db, courseID)
 	switch {
 	case err == sql.ErrNoRows:
 		var errorDesc bytes.Buffer
-		errorDesc.WriteString("ERROR: No records found for idcurso=")
-		errorDesc.WriteString(strconv.FormatInt(idcurso, 10))
+		errorDesc.WriteString("ERROR: No records found for courseID=")
+		errorDesc.WriteString(strconv.FormatInt(courseID, 10))
 		log.Println(errorDesc.String())
 		json.NewEncoder(w).Encode(errorDesc.String())
 		model.CloseDB(db)
@@ -130,9 +130,9 @@ func InserirProfessor(w http.ResponseWriter, r *http.Request) {
 	default:
 	}
 
-	var pessoa entity.Pessoa
-	pessoa.New(idpessoa, nome, numerocpf, numerocelular, cidade, numerocep, endereco, dataCadastro)
-	idpessoaRetorno, err := model.InserirPessoa(db, pessoa)
+	var person entity.Person
+	person.New(personID, name, cpf, cellPhone, city, zipCode, address, dataCadastro)
+	personIDRetorno, err := model.InsertPerson(db, person)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
@@ -140,9 +140,9 @@ func InserirProfessor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var entityy entity.Professor
-	entityy.New(idpessoaRetorno, entityyCurso.ID)
-	idprofessorRetorno, err := model.InserirProfessor(db, entityy)
+	var entityy entity.Teacher
+	entityy.New(personIDRetorno, entityyCourse.ID)
+	idReturned, err := model.InsertTeacher(db, entityy)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
@@ -150,11 +150,11 @@ func InserirProfessor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	model.CloseDB(db)
-	json.NewEncoder(w).Encode(idprofessorRetorno)
+	json.NewEncoder(w).Encode(idReturned)
 }
 
-// AtualizarProfessor Atualiza um registro professor da base.
-func AtualizarProfessor(w http.ResponseWriter, r *http.Request) {
+// UpdateTeacher - Updates a base teacher record.
+func UpdateTeacher(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -163,34 +163,34 @@ func AtualizarProfessor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := mux.Vars(r)
-	idpessoa, err := strconv.ParseInt(params["idpessoa"], 10, 64)
+	personID, err := strconv.ParseInt(params["personID"], 10, 64)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
 	}
-	idcurso, err := strconv.ParseInt(params["idcurso"], 10, 64)
+	courseID, err := strconv.ParseInt(params["courseID"], 10, 64)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
 	}
-	nome := params["nome"]
-	numerocpf := params["numerocpf"]
-	numerocelular := params["numerocelular"]
-	cidade := params["cidade"]
-	numerocep := params["numerocep"]
-	endereco := params["endereco"]
-	datacadastro := util.StringToTime(params["datacadastro"])
+	name := params["name"]
+	cpf := params["cpf"]
+	cellPhone := params["cellPhone"]
+	city := params["city"]
+	zipCode := params["zipCode"]
+	address := params["address"]
+	registrationDate := util.StringToTime(params["registrationDate"])
 
-	var entityy entity.Professor
-	entityy.New(idpessoa, idcurso)
-	var entityypessoa entity.Pessoa
-	entityypessoa.New(idpessoa, nome, numerocpf, numerocelular, cidade, numerocep, endereco, datacadastro)
+	var entityy entity.Teacher
+	entityy.New(personID, courseID)
+	var entityyperson entity.Person
+	entityyperson.New(personID, name, cpf, cellPhone, city, zipCode, address, registrationDate)
 
-	if err = model.AtualizarProfessor(db, entityy, entityypessoa); err != nil {
+	if err = model.UpdateTeacher(db, entityy, entityyperson); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
@@ -199,8 +199,8 @@ func AtualizarProfessor(w http.ResponseWriter, r *http.Request) {
 	model.CloseDB(db)
 }
 
-// RemoverProfessor Remove um registro professor da base.
-func RemoverProfessor(w http.ResponseWriter, r *http.Request) {
+// DeleteTeacher - Removes a record from the base.
+func DeleteTeacher(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB(DataSourcePostgre)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -208,14 +208,14 @@ func RemoverProfessor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := Remover(w, r, db, "professor", "id_pessoa", "idpessoa"); err != nil {
+	if err := Delete(w, r, db, "teacher", "id_person", "personID"); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)
 		return
 	}
 
-	if err := Remover(w, r, db, "pessoa", "id", "idpessoa"); err != nil {
+	if err := Delete(w, r, db, "person", "id", "personID"); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		model.CloseDB(db)

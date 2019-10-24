@@ -115,7 +115,7 @@ func InsertClass(w http.ResponseWriter, r *http.Request) {
 	var entityy entity.Class
 	entityy.New(id, courseID, startDate, endDate, registrationDate)
 
-	idRetorno, err := model.InsertClass(db, entityy)
+	idReturned, err := model.InsertClass(db, entityy)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
@@ -123,7 +123,7 @@ func InsertClass(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	model.CloseDB(db)
-	json.NewEncoder(w).Encode(idRetorno)
+	json.NewEncoder(w).Encode(idReturned)
 }
 
 // UpdateClass - Updates a base class record.
