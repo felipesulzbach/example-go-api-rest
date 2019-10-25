@@ -17,7 +17,7 @@ import (
 
 // FindAllStudent - Returns total list of registered students.
 func FindAllStudent(w http.ResponseWriter, r *http.Request) {
-	db, err := model.NewDB(DataSourcePostgre)
+	db, err := model.NewDB()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
@@ -42,7 +42,7 @@ func FindAllStudent(w http.ResponseWriter, r *http.Request) {
 
 // FindByIDStudent - Returns a specific student by ID.
 func FindByIDStudent(w http.ResponseWriter, r *http.Request) {
-	db, err := model.NewDB(DataSourcePostgre)
+	db, err := model.NewDB()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
@@ -82,7 +82,7 @@ func FindByIDStudent(w http.ResponseWriter, r *http.Request) {
 
 // InsertStudent - Inserts a new student record in the data base.
 func InsertStudent(w http.ResponseWriter, r *http.Request) {
-	db, err := model.NewDB(DataSourcePostgre)
+	db, err := model.NewDB()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
@@ -155,7 +155,7 @@ func InsertStudent(w http.ResponseWriter, r *http.Request) {
 
 // UpdateStudent - Updates a base student record.
 func UpdateStudent(w http.ResponseWriter, r *http.Request) {
-	db, err := model.NewDB(DataSourcePostgre)
+	db, err := model.NewDB()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
@@ -201,7 +201,7 @@ func UpdateStudent(w http.ResponseWriter, r *http.Request) {
 
 // DeleteStudent - Removes a record from the base.
 func DeleteStudent(w http.ResponseWriter, r *http.Request) {
-	db, err := model.NewDB(DataSourcePostgre)
+	db, err := model.NewDB()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)

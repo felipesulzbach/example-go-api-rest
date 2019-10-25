@@ -9,9 +9,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// DataSourcePostgre - URI of the database.
-const DataSourcePostgre = "postgres://postgres:postgres@localhost/go_rest_db?sslmode=disable"
-
 //type Env struct{ db model.Datastore }
 
 // Delete - Removes a record from the base.

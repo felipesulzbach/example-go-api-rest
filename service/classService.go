@@ -17,7 +17,7 @@ import (
 
 // FindAllClass - Returns total list of registered classes.
 func FindAllClass(w http.ResponseWriter, r *http.Request) {
-	db, err := model.NewDB(DataSourcePostgre)
+	db, err := model.NewDB()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
@@ -45,7 +45,7 @@ func FindAllClass(w http.ResponseWriter, r *http.Request) {
 
 // FindByIDClass - Returns a specific class by ID.
 func FindByIDClass(w http.ResponseWriter, r *http.Request) {
-	db, err := model.NewDB(DataSourcePostgre)
+	db, err := model.NewDB()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
@@ -85,7 +85,7 @@ func FindByIDClass(w http.ResponseWriter, r *http.Request) {
 
 // InsertClass - Inserts a new class record in the data base.
 func InsertClass(w http.ResponseWriter, r *http.Request) {
-	db, err := model.NewDB(DataSourcePostgre)
+	db, err := model.NewDB()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
@@ -128,7 +128,7 @@ func InsertClass(w http.ResponseWriter, r *http.Request) {
 
 // UpdateClass - Updates a base class record.
 func UpdateClass(w http.ResponseWriter, r *http.Request) {
-	db, err := model.NewDB(DataSourcePostgre)
+	db, err := model.NewDB()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)
@@ -168,7 +168,7 @@ func UpdateClass(w http.ResponseWriter, r *http.Request) {
 
 // DeleteClass - Removes a record from the base.
 func DeleteClass(w http.ResponseWriter, r *http.Request) {
-	db, err := model.NewDB(DataSourcePostgre)
+	db, err := model.NewDB()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)

@@ -10,7 +10,7 @@ import (
 
 // FindAllPerson - Returns total list of registered persons.
 func FindAllPerson(w http.ResponseWriter, r *http.Request) {
-	db, err := model.NewDB(DataSourcePostgre)
+	db, err := model.NewDB()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		log.Panic(err)

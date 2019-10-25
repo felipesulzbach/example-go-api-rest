@@ -23,12 +23,12 @@ ___
   > go get -u github.com/nicksnyder/go-i18n/v2/goi18n
 
 
-## Data base
+## Database
 
 ### SCHEMA:
 
 ```sql
-DROP SCHEMA GO_TST IF EXISTS CASCADE;
+DROP SCHEMA IF EXISTS GO_TST CASCADE;
 
 CREATE SCHEMA GO_TST;
 
@@ -40,7 +40,7 @@ CREATE TABLE GO_TST.person
 ,cell_phone character varying(20)
 ,city character varying(255)
 ,zip_code character varying(20)
-,address character varying(255),
+,address character varying(255)
 ,registration_date timestamp
 ,CONSTRAINT pk_person PRIMARY KEY (id));
 
