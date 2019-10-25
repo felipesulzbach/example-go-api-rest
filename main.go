@@ -22,7 +22,22 @@ func main() {
 	flag.Parse()
 
 	model.TestConnectionDB()
+	srv := bootHTTPServer()
 
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+
+	<-c
+
+	ctx, cancel := context.WithTimeout(context.Background(), wait)
+	defer cancel()
+	srv.Shutdown(ctx)
+	log.Println("SERVER Shutting Down!")
+	os.Exit(0)
+}
+
+// bootHTTPServer - Creates the HTTP server with the routes.
+func bootHTTPServer() *http.Server {
 	routerWS := *mux.NewRouter()
 	controller.CreateRouters(&routerWS)
 
@@ -43,14 +58,5 @@ func main() {
 		}
 	}()
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-
-	<-c
-
-	ctx, cancel := context.WithTimeout(context.Background(), wait)
-	defer cancel()
-	srv.Shutdown(ctx)
-	log.Println("SERVER Shutting Down!")
-	os.Exit(0)
+	return srv
 }

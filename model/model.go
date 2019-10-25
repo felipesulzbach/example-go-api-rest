@@ -29,7 +29,7 @@ type DB struct {
 	*sql.DB
 }
 
-// TestConnectionDB - Makes a database connection test. If you cannot connect, the server shuts down.
+// TestConnectionDB - Pre-test database connection. If you cannot connect, the server shuts down.
 func TestConnectionDB() {
 	connString := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
