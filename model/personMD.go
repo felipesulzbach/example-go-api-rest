@@ -5,7 +5,7 @@ import (
 )
 
 // NextIDPerson - Returns the next ID.
-func NextIDPerson(db *DB) (int64, error) {
+func (db *DB) NextIDPerson() (int64, error) {
 	row := db.QueryRow("SELECT (MAX(id) + 1) FROM GO_TST.person")
 
 	var id int64
@@ -17,7 +17,7 @@ func NextIDPerson(db *DB) (int64, error) {
 }
 
 // FindAllPerson - Returns total list of registered persons.
-func FindAllPerson(db *DB) ([]*entity.Person, error) {
+func (db *DB) FindAllPerson() ([]*entity.Person, error) {
 	rows, err := db.Query("SELECT * FROM GO_TST.person")
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func FindAllPerson(db *DB) ([]*entity.Person, error) {
 }
 
 // FindByIDPerson - Returns a specific person by ID.
-func FindByIDPerson(db *DB, id int64) (*entity.Person, error) {
+func (db *DB) FindByIDPerson(id int64) (*entity.Person, error) {
 	row := db.QueryRow("SELECT * FROM GO_TST.person WHERE id=$1", id)
 
 	item := new(entity.Person)
@@ -52,7 +52,7 @@ func FindByIDPerson(db *DB, id int64) (*entity.Person, error) {
 }
 
 // InsertPerson - Inserts a new person record in the data base.
-func InsertPerson(db *DB, entityy entity.Person) (int64, error) {
+func (db *DB) InsertPerson(entityy entity.Person) (int64, error) {
 	sqlStatement := "INSERT INTO GO_TST.person (id, name, cpf, cell_phone, city, zip_code, address, registration_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id"
 	var returnedID int64
 	err := db.QueryRow(sqlStatement, entityy.ID, entityy.Name, entityy.Cpf, entityy.CellPhone, entityy.City, entityy.ZipCode, entityy.Address, entityy.RegistrationDate).Scan(&returnedID)
@@ -64,7 +64,7 @@ func InsertPerson(db *DB, entityy entity.Person) (int64, error) {
 }
 
 // UpdatePerson - Updates a base class record.
-func UpdatePerson(db *DB, entityy entity.Person) error {
+func (db *DB) UpdatePerson(entityy entity.Person) error {
 	sqlStatement := "UPDATE GO_TST.person SET name=$2, cpf=$3, cell_phone=$4, city=$5, zip_code=$6, address=$7, registration_date=$8 WHERE id=$1"
 	_, err := db.Exec(sqlStatement, entityy.ID, entityy.Name, entityy.Cpf, entityy.CellPhone, entityy.City, entityy.ZipCode, entityy.Address, entityy.RegistrationDate)
 	if err != nil {

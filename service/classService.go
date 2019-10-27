@@ -24,14 +24,11 @@ func FindAllClass(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//	env := &Env{db}
-
-	//	list, err := env.db.FindAllClass()
-	list, err := model.FindAllClass(db)
+	list, err := db.FindAllClass()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 
@@ -39,7 +36,7 @@ func FindAllClass(w http.ResponseWriter, r *http.Request) {
 		log.Println(item.ToString())
 	}
 
-	model.CloseDB(db)
+	db.CloseDB()
 	json.NewEncoder(w).Encode(list)
 }
 
@@ -57,11 +54,11 @@ func FindByIDClass(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 
-	entityy, err := model.FindByIDClass(db, id)
+	entityy, err := db.FindByIDClass(id)
 	switch {
 	case err == sql.ErrNoRows:
 		var errorDesc bytes.Buffer
@@ -69,17 +66,17 @@ func FindByIDClass(w http.ResponseWriter, r *http.Request) {
 		errorDesc.WriteString(strconv.FormatInt(id, 10))
 		log.Println(errorDesc.String())
 		json.NewEncoder(w).Encode(errorDesc.String())
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	case err != nil:
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	default:
 	}
 
 	log.Println(entityy.ToString())
-	model.CloseDB(db)
+	db.CloseDB()
 	json.NewEncoder(w).Encode(entityy)
 }
 
@@ -92,11 +89,11 @@ func InsertClass(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := model.NextIDClass(db)
+	id, err := db.NextIDClass()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 
@@ -105,7 +102,7 @@ func InsertClass(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 	startDate := util.StringToTime(params["startDate"])
@@ -115,14 +112,14 @@ func InsertClass(w http.ResponseWriter, r *http.Request) {
 	var entityy entity.Class
 	entityy.New(id, courseID, startDate, endDate, registrationDate)
 
-	idReturned, err := model.InsertClass(db, entityy)
+	idReturned, err := db.InsertClass(entityy)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
-	model.CloseDB(db)
+	db.CloseDB()
 	json.NewEncoder(w).Encode(idReturned)
 }
 
@@ -140,14 +137,14 @@ func UpdateClass(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 	courseID, err := strconv.ParseInt(params["courseID"], 10, 64)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 	startDate := util.StringToTime(params["startDate"])
@@ -157,13 +154,13 @@ func UpdateClass(w http.ResponseWriter, r *http.Request) {
 	var entityy entity.Class
 	entityy.New(id, courseID, startDate, endDate, registrationDate)
 
-	if err = model.UpdateClass(db, entityy); err != nil {
+	if err = db.UpdateClass(entityy); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
-	model.CloseDB(db)
+	db.CloseDB()
 }
 
 // DeleteClass - Removes a record from the base.
@@ -178,8 +175,8 @@ func DeleteClass(w http.ResponseWriter, r *http.Request) {
 	if err := Delete(w, r, db, "class", "id", "id"); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
-	model.CloseDB(db)
+	db.CloseDB()
 }

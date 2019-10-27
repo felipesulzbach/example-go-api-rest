@@ -17,11 +17,11 @@ func FindAllPerson(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	list, err := model.FindAllPerson(db)
+	list, err := db.FindAllPerson()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 
@@ -29,6 +29,6 @@ func FindAllPerson(w http.ResponseWriter, r *http.Request) {
 		log.Println(item.ToString())
 	}
 
-	model.CloseDB(db)
+	db.CloseDB()
 	json.NewEncoder(w).Encode(list)
 }

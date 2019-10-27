@@ -1,6 +1,6 @@
 package main
 
-//import "github.com/_dev/exemplo-api-rest/test"
+import "github.com/_dev/exemplo-api-rest/test"
 
 func main() {
 	//test.ExampleLocalizer_MustLocalize()
@@ -9,4 +9,6 @@ func main() {
 	//test.ExampleLocalizer_MustLocalize_template()
 	//test.ExampleLocalizer_MustLocalize_plural_template()
 	//test.ExampleLocalizer_MustLocalize_customTemplateDelims()
+
+	test.TestInterface()
 }

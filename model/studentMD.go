@@ -5,7 +5,7 @@ import (
 )
 
 // FindAllStudent - Returns total list of registered students.
-func FindAllStudent(db *DB) ([]*entity.Student, error) {
+func (db *DB) FindAllStudent() ([]*entity.Student, error) {
 	rows, err := db.Query("SELECT * FROM GO_TST.student")
 	if err != nil {
 		return nil, err
@@ -28,7 +28,7 @@ func FindAllStudent(db *DB) ([]*entity.Student, error) {
 }
 
 // NextIDStudent - Returns the next ID.
-func NextIDStudent(db *DB) ([]*entity.Student, error) {
+func (db *DB) NextIDStudent() ([]*entity.Student, error) {
 	rows, err := db.Query("SELECT * FROM GO_TST.student")
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func NextIDStudent(db *DB) ([]*entity.Student, error) {
 }
 
 // FindByIDStudent - Returns a specific student by ID.
-func FindByIDStudent(db *DB, id int64) (*entity.Student, error) {
+func (db *DB) FindByIDStudent(id int64) (*entity.Student, error) {
 	row := db.QueryRow("SELECT * FROM GO_TST.student WHERE person_id=$1", id)
 
 	item := new(entity.Student)
@@ -63,7 +63,7 @@ func FindByIDStudent(db *DB, id int64) (*entity.Student, error) {
 }
 
 // InsertStudent - Inserts a new student record in the data base.
-func InsertStudent(db *DB, entityy entity.Student) (int64, error) {
+func (db *DB) InsertStudent(entityy entity.Student) (int64, error) {
 	sqlStatement := "INSERT INTO GO_TST.student (person_id, class_id) VALUES ($1, $2) RETURNING person_id"
 
 	var returnedID int64
@@ -76,13 +76,13 @@ func InsertStudent(db *DB, entityy entity.Student) (int64, error) {
 }
 
 // UpdateStudent - Updates a base student record.
-func UpdateStudent(db *DB, entityy entity.Student, person entity.Person) error {
+func (db *DB) UpdateStudent(entityy entity.Student, person entity.Person) error {
 	sqlStatement := "UPDATE GO_TST.student SET class_id=$2 WHERE person_id=$1"
 	_, err := db.Exec(sqlStatement, entityy.PersonID, entityy.ClassID)
 	if err != nil {
 		return err
 	}
-	if err = UpdatePerson(db, person); err != nil {
+	if err = db.UpdatePerson(person); err != nil {
 		return err
 	}
 	return nil

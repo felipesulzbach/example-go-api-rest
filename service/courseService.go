@@ -24,14 +24,12 @@ func FindAllCourse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//	env := &Env{db}
-
 	//	list, err := env.db.FindAllCourse()
-	list, err := model.FindAllCourse(db)
+	list, err := db.FindAllCourse()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 
@@ -39,7 +37,7 @@ func FindAllCourse(w http.ResponseWriter, r *http.Request) {
 		log.Println(item.ToString())
 	}
 
-	model.CloseDB(db)
+	db.CloseDB()
 	json.NewEncoder(w).Encode(list)
 }
 
@@ -58,11 +56,11 @@ func FindByIDCourse(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 
-	entityy, err := model.FindByIDCourse(db, id)
+	entityy, err := db.FindByIDCourse(id)
 	switch {
 	case err == sql.ErrNoRows:
 		var errorDesc bytes.Buffer
@@ -70,17 +68,17 @@ func FindByIDCourse(w http.ResponseWriter, r *http.Request) {
 		errorDesc.WriteString(strconv.FormatInt(id, 10))
 		log.Println(errorDesc.String())
 		json.NewEncoder(w).Encode(errorDesc.String())
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	case err != nil:
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	default:
 	}
 
 	log.Println(entityy.ToString())
-	model.CloseDB(db)
+	db.CloseDB()
 	json.NewEncoder(w).Encode(entityy)
 }
 
@@ -93,11 +91,11 @@ func InsertCourse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := model.NextIDCourse(db)
+	id, err := db.NextIDCourse()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 
@@ -109,14 +107,14 @@ func InsertCourse(w http.ResponseWriter, r *http.Request) {
 	var entityy entity.Course
 	entityy.New(id, name, description, dataCadastro)
 
-	idReturned, err := model.InsertCourse(db, entityy)
+	idReturned, err := db.InsertCourse(entityy)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
-	model.CloseDB(db)
+	db.CloseDB()
 	json.NewEncoder(w).Encode(idReturned)
 }
 
@@ -134,7 +132,7 @@ func UpdateCourse(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 	name := params["name"]
@@ -144,13 +142,13 @@ func UpdateCourse(w http.ResponseWriter, r *http.Request) {
 	var entityy entity.Course
 	entityy.New(id, name, description, dataCadastro)
 
-	if err = model.UpdateCourse(db, entityy); err != nil {
+	if err = db.UpdateCourse(entityy); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
-	model.CloseDB(db)
+	db.CloseDB()
 }
 
 // DeleteCourse - Removes a record from the base.
@@ -165,8 +163,8 @@ func DeleteCourse(w http.ResponseWriter, r *http.Request) {
 	if err := Delete(w, r, db, "curso", "id", "id"); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
-	model.CloseDB(db)
+	db.CloseDB()
 }

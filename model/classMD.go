@@ -5,7 +5,7 @@ import (
 )
 
 // NextIDClass - Returns the next ID.
-func NextIDClass(db *DB) (int64, error) {
+func (db *DB) NextIDClass() (int64, error) {
 	row := db.QueryRow("SELECT (MAX(id) + 1) FROM GO_TST.class")
 
 	var id int64
@@ -17,7 +17,7 @@ func NextIDClass(db *DB) (int64, error) {
 }
 
 // FindAllClass - Returns total list of registered classes.
-func FindAllClass(db *DB) ([]*entity.Class, error) {
+func (db *DB) FindAllClass() ([]*entity.Class, error) {
 	rows, err := db.Query("SELECT * FROM GO_TST.class")
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func FindAllClass(db *DB) ([]*entity.Class, error) {
 }
 
 // FindByIDClass - Returns a specific class by ID.
-func FindByIDClass(db *DB, id int64) (*entity.Class, error) {
+func (db *DB) FindByIDClass(id int64) (*entity.Class, error) {
 	row := db.QueryRow("SELECT * FROM GO_TST.class WHERE id=$1", id)
 
 	item := new(entity.Class)
@@ -52,7 +52,7 @@ func FindByIDClass(db *DB, id int64) (*entity.Class, error) {
 }
 
 // InsertClass - Inserts a new class record in the data base.
-func InsertClass(db *DB, entityy entity.Class) (int64, error) {
+func (db *DB) InsertClass(entityy entity.Class) (int64, error) {
 	sqlStatement := "INSERT INTO GO_TST.class (id, course_id, start_date, end_date, registration_date) VALUES ($1, $2, $3, $4, $5) RETURNING id"
 	var returnedID int64
 	err := db.QueryRow(sqlStatement, entityy.ID, entityy.CourseID, entityy.StartDate, entityy.EndDate, entityy.RegistrationDate).Scan(&returnedID)
@@ -64,7 +64,7 @@ func InsertClass(db *DB, entityy entity.Class) (int64, error) {
 }
 
 // UpdateClass - Updates a base class record.
-func UpdateClass(db *DB, entityy entity.Class) error {
+func (db *DB) UpdateClass(entityy entity.Class) error {
 	sqlStatement := "UPDATE GO_TST.class SET course_id=$2, start_date=$3, end_date=$4, registration_date=$5 WHERE id=$1"
 	_, err := db.Exec(sqlStatement, entityy.ID, entityy.CourseID, entityy.StartDate, entityy.EndDate, entityy.RegistrationDate)
 	if err != nil {

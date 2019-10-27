@@ -5,7 +5,7 @@ import (
 )
 
 // FindAllTeacher - Returns total list of registered teachers.
-func FindAllTeacher(db *DB) ([]*entity.Teacher, error) {
+func (db *DB) FindAllTeacher() ([]*entity.Teacher, error) {
 	rows, err := db.Query("SELECT * FROM GO_TST.teacher")
 	if err != nil {
 		return nil, err
@@ -28,7 +28,7 @@ func FindAllTeacher(db *DB) ([]*entity.Teacher, error) {
 }
 
 // FindByIDTeacher - Returns a specific teacher by ID.
-func FindByIDTeacher(db *DB, id int64) (*entity.Teacher, error) {
+func (db *DB) FindByIDTeacher(id int64) (*entity.Teacher, error) {
 	row := db.QueryRow("SELECT * FROM GO_TST.teacher WHERE id=$1", id)
 
 	item := new(entity.Teacher)
@@ -40,7 +40,7 @@ func FindByIDTeacher(db *DB, id int64) (*entity.Teacher, error) {
 }
 
 // InsertTeacher - Inserts a new class record in the data base.
-func InsertTeacher(db *DB, entityy entity.Teacher) (int64, error) {
+func (db *DB) InsertTeacher(entityy entity.Teacher) (int64, error) {
 	sqlStatement := "INSERT INTO GO_TST.teacher (person_id, course_id) VALUES ($1, $2) RETURNING person_id"
 
 	var returnedID int64
@@ -53,13 +53,13 @@ func InsertTeacher(db *DB, entityy entity.Teacher) (int64, error) {
 }
 
 // UpdateTeacher - Updates a base teacher record.
-func UpdateTeacher(db *DB, entityy entity.Teacher, person entity.Person) error {
+func (db *DB) UpdateTeacher(entityy entity.Teacher, person entity.Person) error {
 	sqlStatement := "UPDATE GO_TST.teacher SET course_id=$2 WHERE person_id=$1"
 	_, err := db.Exec(sqlStatement, entityy.PersonID, entityy.CourseID)
 	if err != nil {
 		return err
 	}
-	if err = UpdatePerson(db, person); err != nil {
+	if err = db.UpdatePerson(person); err != nil {
 		return err
 	}
 	return nil

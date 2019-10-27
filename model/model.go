@@ -20,10 +20,6 @@ const (
 	driver   = "postgres"
 )
 
-//type Datastore interface {
-//	BuscarCursos() ([]*entity.Curso, error)
-//}
-
 // DB Database connection.
 type DB struct {
 	*sql.DB
@@ -31,6 +27,24 @@ type DB struct {
 
 // TestConnectionDB - Pre-test database connection. If you cannot connect, the server shuts down.
 func TestConnectionDB() {
+	log.Println("DATABASE Testing connection...")
+	_, err := openConnectionDatabase(true)
+	if err != nil {
+		log.Fatal("SERVER Shutting Down!")
+	}
+	log.Println("DATABASE Successfully connected!")
+}
+
+// NewDB - Opens new PostgreSQL connection.
+func NewDB() (*DB, error) {
+	db, err := openConnectionDatabase(false)
+	if err != nil {
+		return nil, err
+	}
+	return &DB{db}, nil
+}
+
+func openConnectionDatabase(closeTheConnection bool) (*sql.DB, error) {
 	connString := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
@@ -42,46 +56,31 @@ func TestConnectionDB() {
 	connDesc.WriteString("/")
 	connDesc.WriteString(dbname)
 
-	log.Println("DATABASE Testing connection...")
-
 	db, err := sql.Open(driver, connString)
 	if err != nil {
-		log.Fatalf("DATABASE Error creating connection pool in URI: %s. The connection settings are in file '.../model/model.go'.\n", connDesc.String())
+		log.Panicf("DATABASE Error creating connection pool in URI: %s. The connection settings are in file '.../model/model.go'.\n", connDesc.String())
+		return nil, err
 	}
-	defer db.Close()
+
+	if closeTheConnection {
+		defer db.Close()
+	}
 
 	err = db.Ping()
 	if err != nil {
-		log.Fatalf("DATABASE Error connection in URI: %s. The connection settings are in file '.../model/model.go'.\n", connDesc.String())
-	}
-
-	log.Println("DATABASE Successfully connected!")
-}
-
-// NewDB - Opens new PostgreSQL connection.
-func NewDB() (*DB, error) {
-	connString := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	db, err := sql.Open(driver, connString)
-	if err != nil {
-		log.Fatal("Error creating connection pool: ", err.Error())
+		log.Panicf("DATABASE Error connection in URI: %s. The connection settings are in file '.../model/model.go'.\n", connDesc.String())
 		return nil, err
 	}
-	if err = db.Ping(); err != nil {
-		log.Fatal("Error connection in Database: ", err.Error())
-		return nil, err
-	}
-	return &DB{db}, nil
+	return db, err
 }
 
 // CloseDB - Closes the connection to PostgreSQL.
-func CloseDB(db *DB) {
+func (db *DB) CloseDB() {
 	defer db.Close()
 }
 
 // Delete - Removes a record from the base.
-func Delete(db *DB, entity string, column string, value int64) error {
+func (db *DB) Delete(entity string, column string, value int64) error {
 	var sqlStatement bytes.Buffer
 	sqlStatement.WriteString("DELETE FROM GO_TST.")
 	sqlStatement.WriteString(entity)

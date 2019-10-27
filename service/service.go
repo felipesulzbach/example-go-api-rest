@@ -9,8 +9,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//type Env struct{ db model.Datastore }
-
 // Delete - Removes a record from the base.
 func Delete(w http.ResponseWriter, r *http.Request, db *model.DB, entity string, column string, parametter string) error {
 	params := mux.Vars(r)
@@ -19,7 +17,7 @@ func Delete(w http.ResponseWriter, r *http.Request, db *model.DB, entity string,
 		return err
 	}
 
-	if err = model.Delete(db, entity, column, id); err != nil {
+	if err = db.Delete(entity, column, id); err != nil {
 		return err
 	}
 	return nil

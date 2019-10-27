@@ -24,11 +24,11 @@ func FindAllStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	list, err := model.FindAllStudent(db)
+	list, err := db.FindAllStudent()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 
@@ -36,7 +36,7 @@ func FindAllStudent(w http.ResponseWriter, r *http.Request) {
 		log.Println(item.ToString())
 	}
 
-	model.CloseDB(db)
+	db.CloseDB()
 	json.NewEncoder(w).Encode(list)
 }
 
@@ -54,11 +54,11 @@ func FindByIDStudent(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 
-	entityy, err := model.FindByIDStudent(db, id)
+	entityy, err := db.FindByIDStudent(id)
 	switch {
 	case err == sql.ErrNoRows:
 		var errorDesc bytes.Buffer
@@ -66,17 +66,17 @@ func FindByIDStudent(w http.ResponseWriter, r *http.Request) {
 		errorDesc.WriteString(strconv.FormatInt(id, 10))
 		log.Println(errorDesc.String())
 		json.NewEncoder(w).Encode(errorDesc.String())
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	case err != nil:
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	default:
 	}
 
 	log.Println(entityy.ToString())
-	model.CloseDB(db)
+	db.CloseDB()
 	json.NewEncoder(w).Encode(entityy)
 }
 
@@ -89,11 +89,11 @@ func InsertStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	personID, err := model.NextIDPerson(db)
+	personID, err := db.NextIDPerson()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 
@@ -109,11 +109,11 @@ func InsertStudent(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 
-	entityyClass, err := model.FindByIDClass(db, classID)
+	entityyClass, err := db.FindByIDClass(classID)
 	switch {
 	case err == sql.ErrNoRows:
 		var errorDesc bytes.Buffer
@@ -121,35 +121,35 @@ func InsertStudent(w http.ResponseWriter, r *http.Request) {
 		errorDesc.WriteString(strconv.FormatInt(classID, 10))
 		log.Println(errorDesc.String())
 		json.NewEncoder(w).Encode(errorDesc.String())
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	case err != nil:
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	default:
 	}
 
 	var person entity.Person
 	person.New(personID, name, cpf, cellPhone, city, zipCode, address, registrationDate)
-	personIDReturn, err := model.InsertPerson(db, person)
+	personIDReturn, err := db.InsertPerson(person)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 
 	var entityy entity.Student
 	entityy.New(personIDReturn, entityyClass.ID)
-	idReturned, err := model.InsertStudent(db, entityy)
+	idReturned, err := db.InsertStudent(entityy)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
-	model.CloseDB(db)
+	db.CloseDB()
 	json.NewEncoder(w).Encode(idReturned)
 }
 
@@ -167,14 +167,14 @@ func UpdateStudent(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 	classID, err := strconv.ParseInt(params["classID"], 10, 64)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 	name := params["name"]
@@ -190,13 +190,13 @@ func UpdateStudent(w http.ResponseWriter, r *http.Request) {
 	var entityyperson entity.Person
 	entityyperson.New(personID, name, cpf, cellPhone, city, zipCode, address, registrationDate)
 
-	if err = model.UpdateStudent(db, entityy, entityyperson); err != nil {
+	if err = db.UpdateStudent(entityy, entityyperson); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
-	model.CloseDB(db)
+	db.CloseDB()
 }
 
 // DeleteStudent - Removes a record from the base.
@@ -211,15 +211,15 @@ func DeleteStudent(w http.ResponseWriter, r *http.Request) {
 	if err := Delete(w, r, db, "student", "id_person", "personID"); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
 
 	if err := Delete(w, r, db, "person", "id", "personID"); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		model.CloseDB(db)
+		db.CloseDB()
 		return
 	}
-	model.CloseDB(db)
+	db.CloseDB()
 }
