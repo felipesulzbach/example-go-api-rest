@@ -10,7 +10,6 @@ import (
 
 	"github.com/_dev/exemplo-api-rest/model"
 	"github.com/_dev/exemplo-api-rest/model/entity"
-	"github.com/_dev/exemplo-api-rest/util"
 
 	"github.com/gorilla/mux"
 )
@@ -99,13 +98,9 @@ func InsertCourse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	params := mux.Vars(r)
-	name := params["name"]
-	description := params["description"]
-	dataCadastro := util.StringToTime(params["registrationDate"])
-
 	var entityy entity.Course
-	entityy.New(id, name, description, dataCadastro)
+	_ = json.NewDecoder(r.Body).Decode(&entityy)
+	entityy.ID = id;
 
 	idReturned, err := db.InsertCourse(entityy)
 	if err != nil {
@@ -127,20 +122,8 @@ func UpdateCourse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	params := mux.Vars(r)
-	id, err := strconv.ParseInt(params["id"], 10, 64)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		db.CloseDB()
-		return
-	}
-	name := params["name"]
-	description := params["description"]
-	dataCadastro := util.StringToTime(params["registrationDate"])
-
 	var entityy entity.Course
-	entityy.New(id, name, description, dataCadastro)
+	_ = json.NewDecoder(r.Body).Decode(&entityy)
 
 	if err = db.UpdateCourse(entityy); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -160,7 +143,7 @@ func DeleteCourse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := Delete(w, r, db, "curso", "id", "id"); err != nil {
+	if err := Delete(w, r, db, "course", "id", "id"); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		db.CloseDB()
