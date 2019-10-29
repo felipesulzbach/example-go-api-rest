@@ -95,10 +95,11 @@ func InsertClass(w http.ResponseWriter, r *http.Request) {
 		log.Panic(err)
 		db.CloseDB()
 		return
+	}
 
 	var entityy entity.Class
 	_ = json.NewDecoder(r.Body).Decode(&entityy)
-	entityy.ID = id;
+	entityy.ID = id
 
 	idReturned, err := db.InsertClass(entityy)
 	if err != nil {

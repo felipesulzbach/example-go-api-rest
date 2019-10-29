@@ -9,15 +9,22 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// ServiceDelete - Parameters usage in delete.
+type ServiceDelete struct {
+	Entity     string
+	Column     string
+	Parametter string
+}
+
 // Delete - Removes a record from the base.
-func Delete(w http.ResponseWriter, r *http.Request, db *model.DB, entity string, column string, parametter string) error {
+func (serviceDelete ServiceDelete) Delete(w http.ResponseWriter, r *http.Request, db *model.DB) error {
 	params := mux.Vars(r)
-	id, err := strconv.ParseInt(params[parametter], 10, 64)
+	id, err := strconv.ParseInt(params[serviceDelete.Parametter], 10, 64)
 	if err != nil {
 		return err
 	}
 
-	if err = db.Delete(entity, column, id); err != nil {
+	if err = db.Delete(serviceDelete.Entity, serviceDelete.Column, id); err != nil {
 		return err
 	}
 	return nil

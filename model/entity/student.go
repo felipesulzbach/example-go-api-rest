@@ -2,7 +2,6 @@ package entity
 
 import (
 	"encoding/json"
-	"strconv"
 )
 
 // Student Entity.

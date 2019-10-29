@@ -10,12 +10,8 @@ import (
 
 	"github.com/_dev/exemplo-api-rest/model"
 	"github.com/_dev/exemplo-api-rest/model/entity"
-	"github.com/_dev/exemplo-api-rest/util"
-
-	"github.com/gorilla/mux"
 )
 
-// FindAllStudent - Returns total list of registered students.
 func FindAllStudent(w http.ResponseWriter, r *http.Request) {
 	db, err := model.NewDB()
 	if err != nil {
@@ -99,7 +95,7 @@ func InsertStudent(w http.ResponseWriter, r *http.Request) {
 		db.CloseDB()
 		return
 	}
-	entityy.Person.ID = id;
+	entityy.Person.ID = id
 
 	idClass, err := db.InsertClass(entityy.Class)
 	if err != nil {
@@ -108,7 +104,7 @@ func InsertStudent(w http.ResponseWriter, r *http.Request) {
 		db.CloseDB()
 		return
 	}
-	entityy.Class.ID = idClass;
+	entityy.Class.ID = idClass
 
 	idReturned, err := db.InsertStudent(entityy)
 	if err != nil {
@@ -130,35 +126,26 @@ func UpdateStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	params := mux.Vars(r)
-	id, err := strconv.ParseInt(params["id"], 10, 64)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		db.CloseDB()
-		return
-	}
-	classID, err := strconv.ParseInt(params["classID"], 10, 64)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		db.CloseDB()
-		return
-	}
-	name := params["name"]
-	cpf := params["cpf"]
-	cellPhone := params["cellPhone"]
-	city := params["city"]
-	zipCode := params["zipCode"]
-	address := params["address"]
-	registrationDate := util.StringToTime(params["registrationDate"])
-
 	var entityy entity.Student
-	entityy.New(id, classID)
-	var entityyperson entity.Person
-	entityyperson.New(id, name, cpf, cellPhone, city, zipCode, address, registrationDate)
+	_ = json.NewDecoder(r.Body).Decode(&entityy)
 
-	if err = db.UpdateStudent(entityy, entityyperson); err != nil {
+	var entityyPerson := entityy.Person
+	if err = db.UpdatePerson(entityyPerson); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		log.Panic(err)
+		db.CloseDB()
+		return
+	}
+
+	var entityyClass := entityy.Class
+	if err = db.UpdateClass(entityyClass); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		log.Panic(err)
+		db.CloseDB()
+		return
+	}
+
+	if err = db.UpdateStudent(entityy); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		db.CloseDB()
@@ -176,14 +163,16 @@ func DeleteStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := Delete(w, r, db, "student", "id_person", "id"); err != nil {
+	serviceDelete := ServiceDelete{"student", "id_person", "id"}
+	if err := serviceDelete.Delete(w, r, db); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		db.CloseDB()
 		return
 	}
 
-	if err := Delete(w, r, db, "person", "id", "id"); err != nil {
+	serviceDelete = ServiceDelete{"person", "id", "id"}
+	if err := serviceDelete.Delete(w, r, db); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		db.CloseDB()

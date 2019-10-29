@@ -15,7 +15,7 @@ func (db *DB) FindAllStudent() ([]*entity.Student, error) {
 	list := make([]*entity.Student, 0)
 	for rows.Next() {
 		item := new(entity.Student)
-		err := rows.Scan(&item.PersonID, &item.ClassID)
+		err := rows.Scan(&item.Person, &item.Class)
 		if err != nil {
 			return nil, err
 		}
@@ -38,7 +38,7 @@ func (db *DB) NextIDStudent() ([]*entity.Student, error) {
 	list := make([]*entity.Student, 0)
 	for rows.Next() {
 		item := new(entity.Student)
-		err := rows.Scan(&item.PersonID, &item.ClassID)
+		err := rows.Scan(&item.Person, &item.Class)
 		if err != nil {
 			return nil, err
 		}
@@ -52,8 +52,7 @@ func (db *DB) NextIDStudent() ([]*entity.Student, error) {
 
 // FindByIDStudent - Returns a specific student by ID.
 func (db *DB) FindByIDStudent(id int64) (*entity.Student, error) {
-	row := db.QueryRow("SELECT * FROM GO_TST.student WHERE person_id=$1", id) 
-
+	row := db.QueryRow("SELECT * FROM GO_TST.student WHERE person_id=$1", id)
 	item := new(entity.Student)
 	err := row.Scan(&item.Person, &item.Class)
 	if err != nil {
@@ -65,7 +64,6 @@ func (db *DB) FindByIDStudent(id int64) (*entity.Student, error) {
 // InsertStudent - Inserts a new student record in the data base.
 func (db *DB) InsertStudent(entityy entity.Student) (int64, error) {
 	sqlStatement := "INSERT INTO GO_TST.student (person_id, class_id) VALUES ($1, $2) RETURNING person_id"
-
 	var returnedID int64
 	err := db.QueryRow(sqlStatement, entityy.Person.ID, entityy.Class.ID).Scan(&returnedID)
 	if err != nil {
