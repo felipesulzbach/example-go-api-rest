@@ -95,22 +95,10 @@ func InsertClass(w http.ResponseWriter, r *http.Request) {
 		log.Panic(err)
 		db.CloseDB()
 		return
-	}
-
-	params := mux.Vars(r)
-	courseID, err := strconv.ParseInt(params["courseID"], 10, 64)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		db.CloseDB()
-		return
-	}
-	startDate := util.StringToTime(params["startDate"])
-	endDate := util.StringToTime(params["endDate"])
-	registrationDate := util.StringToTime(params["registrationDate"])
 
 	var entityy entity.Class
-	entityy.New(id, courseID, startDate, endDate, registrationDate)
+	_ = json.NewDecoder(r.Body).Decode(&entityy)
+	entityy.ID = id;
 
 	idReturned, err := db.InsertClass(entityy)
 	if err != nil {

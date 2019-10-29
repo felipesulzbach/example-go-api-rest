@@ -89,59 +89,27 @@ func InsertStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	personID, err := db.NextIDPerson()
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		db.CloseDB()
-		return
-	}
-
-	params := mux.Vars(r)
-	name := params["name"]
-	cpf := params["cpf"]
-	cellPhone := params["cellPhone"]
-	city := params["city"]
-	zipCode := params["zipCode"]
-	address := params["address"]
-	registrationDate := util.StringToTime(params["registrationDate"])
-	classID, err := strconv.ParseInt(params["classID"], 10, 64)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		db.CloseDB()
-		return
-	}
-
-	entityyClass, err := db.FindByIDClass(classID)
-	switch {
-	case err == sql.ErrNoRows:
-		var errorDesc bytes.Buffer
-		errorDesc.WriteString("ERROR: No records found for classID=")
-		errorDesc.WriteString(strconv.FormatInt(classID, 10))
-		log.Println(errorDesc.String())
-		json.NewEncoder(w).Encode(errorDesc.String())
-		db.CloseDB()
-		return
-	case err != nil:
-		log.Panic(err)
-		db.CloseDB()
-		return
-	default:
-	}
-
-	var person entity.Person
-	person.New(personID, name, cpf, cellPhone, city, zipCode, address, registrationDate)
-	personIDReturn, err := db.InsertPerson(person)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		db.CloseDB()
-		return
-	}
-
 	var entityy entity.Student
-	entityy.New(personIDReturn, entityyClass.ID)
+	_ = json.NewDecoder(r.Body).Decode(&entityy)
+
+	id, err := db.InsertPerson(entityy.Person)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		log.Panic(err)
+		db.CloseDB()
+		return
+	}
+	entityy.Person.ID = id;
+
+	idClass, err := db.InsertClass(entityy.Class)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		log.Panic(err)
+		db.CloseDB()
+		return
+	}
+	entityy.Class.ID = idClass;
+
 	idReturned, err := db.InsertStudent(entityy)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -163,7 +131,7 @@ func UpdateStudent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := mux.Vars(r)
-	personID, err := strconv.ParseInt(params["personID"], 10, 64)
+	id, err := strconv.ParseInt(params["id"], 10, 64)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
@@ -186,9 +154,9 @@ func UpdateStudent(w http.ResponseWriter, r *http.Request) {
 	registrationDate := util.StringToTime(params["registrationDate"])
 
 	var entityy entity.Student
-	entityy.New(personID, classID)
+	entityy.New(id, classID)
 	var entityyperson entity.Person
-	entityyperson.New(personID, name, cpf, cellPhone, city, zipCode, address, registrationDate)
+	entityyperson.New(id, name, cpf, cellPhone, city, zipCode, address, registrationDate)
 
 	if err = db.UpdateStudent(entityy, entityyperson); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -208,14 +176,14 @@ func DeleteStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := Delete(w, r, db, "student", "id_person", "personID"); err != nil {
+	if err := Delete(w, r, db, "student", "id_person", "id"); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		db.CloseDB()
 		return
 	}
 
-	if err := Delete(w, r, db, "person", "id", "personID"); err != nil {
+	if err := Delete(w, r, db, "person", "id", "id"); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		db.CloseDB()

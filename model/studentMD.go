@@ -52,10 +52,10 @@ func (db *DB) NextIDStudent() ([]*entity.Student, error) {
 
 // FindByIDStudent - Returns a specific student by ID.
 func (db *DB) FindByIDStudent(id int64) (*entity.Student, error) {
-	row := db.QueryRow("SELECT * FROM GO_TST.student WHERE person_id=$1", id)
+	row := db.QueryRow("SELECT * FROM GO_TST.student WHERE person_id=$1", id) 
 
 	item := new(entity.Student)
-	err := row.Scan(&item.PersonID, &item.ClassID)
+	err := row.Scan(&item.Person, &item.Class)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (db *DB) InsertStudent(entityy entity.Student) (int64, error) {
 	sqlStatement := "INSERT INTO GO_TST.student (person_id, class_id) VALUES ($1, $2) RETURNING person_id"
 
 	var returnedID int64
-	err := db.QueryRow(sqlStatement, entityy.PersonID, entityy.ClassID).Scan(&returnedID)
+	err := db.QueryRow(sqlStatement, entityy.Person.ID, entityy.Class.ID).Scan(&returnedID)
 	if err != nil {
 		return 0, err
 	}
@@ -78,7 +78,7 @@ func (db *DB) InsertStudent(entityy entity.Student) (int64, error) {
 // UpdateStudent - Updates a base student record.
 func (db *DB) UpdateStudent(entityy entity.Student, person entity.Person) error {
 	sqlStatement := "UPDATE GO_TST.student SET class_id=$2 WHERE person_id=$1"
-	_, err := db.Exec(sqlStatement, entityy.PersonID, entityy.ClassID)
+	_, err := db.Exec(sqlStatement, entityy.Person.ID, entityy.Class.ID)
 	if err != nil {
 		return err
 	}
