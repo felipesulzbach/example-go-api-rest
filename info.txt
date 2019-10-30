@@ -1,0 +1,15 @@
+Atom plugins:
+- atom-ide-ui
+- eclipse-keybindings
+- go-debug
+- go-plus
+- go-signature-statusbar
+- ide-golang
+- terminal-plus
+- tabs-to-spaces
+- tidy-markdown
+
+Visual Studio Code plugins:
+- Go
+- Go Outliner
+- Go Autotest

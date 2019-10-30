@@ -74,13 +74,16 @@ func (db *DB) InsertStudent(entityy entity.Student) (int64, error) {
 }
 
 // UpdateStudent - Updates a base student record.
-func (db *DB) UpdateStudent(entityy entity.Student, person entity.Person) error {
+func (db *DB) UpdateStudent(entityy entity.Student) error {
 	sqlStatement := "UPDATE GO_TST.student SET class_id=$2 WHERE person_id=$1"
 	_, err := db.Exec(sqlStatement, entityy.Person.ID, entityy.Class.ID)
 	if err != nil {
 		return err
 	}
-	if err = db.UpdatePerson(person); err != nil {
+	if err = db.UpdatePerson(entityy.Person); err != nil {
+		return err
+	}
+	if err = db.UpdateClass(entityy.Class); err != nil {
 		return err
 	}
 	return nil
