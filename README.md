@@ -2,30 +2,42 @@
 
 API REST example in GoLang.
 
-___
+--------------------------------------------------------------------------------
 
 ## Prerequisites
 
 - [Visual Studio Code](https://code.visualstudio.com/) or other IDE (Integrated Development Environment);
 - [Golang](https://golang.org/);
 
-
 ## Preparing the environment
 
-&nbsp;&nbsp;&nbsp;&nbsp;The following technologies are critical for running/compiling application sources:
+The following technologies are critical for running/compiling application sources:
 
 - Access the application directory from the terminal and execute:
+
   - Install the [gorilla/mux](https://github.com/gorilla/mux):
-  > go get -u github.com/gorilla/mux
+
+    > go get -u github.com/gorilla/mux
+
   - Install the [Postgres Driver](https://github.com/lib/pq):
-  > go get github.com/lib/pq
+
+    > go get github.com/lib/pq
+
   - Install the [go-i18n](https://github.com/nicksnyder/go-i18n)
-  > go get -u github.com/nicksnyder/go-i18n/v2/goi18n
 
+    > go get -u github.com/nicksnyder/go-i18n/v2/goi18n
 
-## Database
+## PostgreSql Database configuration
 
-### SCHEMA:
+### Connection Settings
+
+- HOST: **localhost**
+- PORT: **5435**
+- USER: **postgres**
+- PASSWORD: **postgres**
+- DATABASE NAME: **go_rest_db**
+
+### Create structure
 
 ```sql
 DROP SCHEMA IF EXISTS GO_TST CASCADE;
@@ -82,8 +94,7 @@ CREATE TABLE GO_TST.teacher
 );
 ```
 
-
-### DATA:
+### Mock registers
 
 ```sql
 -- PERSON --
@@ -237,3 +248,42 @@ VALUES (
    ,2 --class_id
 );
 ```
+
+## End points
+
+### Course
+
+- [GET] - Find All - <http://localhost:8080/course>
+- [GET] - Find By ID - <http://localhost:8080/course/1>
+- [POST] - Insert - <http://localhost:8080/course>
+
+  ```json
+  Body Request:
+  {
+    "id": 3,
+    "name": "Name 3",
+    "description": "Description 3",
+    "registrationDate": "2019-10-30T19:54:20.060092Z"
+  }
+  ```
+
+- [DELETE] - Delete - <http://localhost:8080/course/3>
+
+### Class
+
+- [GET] - Find All - <http://localhost:8080/class>
+- [GET] - Find By ID - <http://localhost:8080/class/1>
+
+### Person
+
+- [GET] - Find All - <http://localhost:8080/person>
+
+### Student
+
+- [GET] - Find All - <http://localhost:8080/student>
+- [GET] - Find By ID - <http://localhost:8080/student/1>
+
+### Teacher
+
+- [GET] - Find All - <http://localhost:8080/teacher>
+- [GET] - Find By ID - <http://localhost:8080/teacher/1>

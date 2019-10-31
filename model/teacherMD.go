@@ -15,7 +15,7 @@ func (db *DB) FindAllTeacher() ([]*entity.Teacher, error) {
   list := make([]*entity.Teacher, 0)
   for rows.Next() {
     item := new(entity.Teacher)
-    err := rows.Scan(&item.Person, &item.Course)
+    err := rows.Scan(&item.Person.ID, &item.Course.ID)
     if err != nil {
       return nil, err
     }
@@ -32,7 +32,7 @@ func (db *DB) FindByIDTeacher(id int64) (*entity.Teacher, error) {
   row := db.QueryRow("SELECT * FROM GO_TST.teacher WHERE id=$1", id)
 
   item := new(entity.Teacher)
-  err := row.Scan(&item.Person, &item.Course)
+  err := row.Scan(&item.Person.ID, &item.Course.ID)
   if err != nil {
     return nil, err
   }

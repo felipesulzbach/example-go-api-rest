@@ -27,7 +27,7 @@ func (db *DB) FindAllClass() ([]*entity.Class, error) {
   list := make([]*entity.Class, 0)
   for rows.Next() {
     item := new(entity.Class)
-    err := rows.Scan(&item.ID, &item.Course, &item.StartDate, &item.EndDate, &item.RegistrationDate)
+    err := rows.Scan(&item.ID, &item.Course.ID, &item.StartDate, &item.EndDate, &item.RegistrationDate)
     if err != nil {
       return nil, err
     }
@@ -44,7 +44,7 @@ func (db *DB) FindByIDClass(id int64) (*entity.Class, error) {
   row := db.QueryRow("SELECT * FROM GO_TST.class WHERE id=$1", id)
 
   item := new(entity.Class)
-  err := row.Scan(&item.ID, &item.Course, &item.StartDate, &item.EndDate, &item.RegistrationDate)
+  err := row.Scan(&item.ID, &item.Course.ID, &item.StartDate, &item.EndDate, &item.RegistrationDate)
   if err != nil {
     return nil, err
   }
