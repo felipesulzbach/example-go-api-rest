@@ -4,12 +4,45 @@ API REST example in GoLang.
 
 --------------------------------------------------------------------------------
 
-## Prerequisites
+## About Golang
+
+![](https://raw.githubusercontent.com/felipesulzbach/grpc-go-example/master/things/go.png)
+
+### What is?
+
+Golang, or simply Go, is an open source language created in 2009 by [Google](https://about.google/intl/en_US/) (by engineers [Rob Pike](https://en.wikipedia.org/wiki/Rob_Pike) and [Ken Thompson](https://en.wikipedia.org/wiki/Ken_Thompson)). The Go language was created with the goal of having **C** language performance but also focusing more readable and easier to program from more robust languages like **Java**.
+
+### Some advantages of language
+
+- Incredibly light in terms of memory usage;
+- Suppose several concurrent processing because it uses goroutines instead of threads that are found in most programming languages. Competition is one of the language's strengths;
+- Compiles very fast;
+- Has garbage collector (has been incorporated into its core in order to prioritize performance);
+- It is strongly typed.
+
+GoLang intentionally leaves out many features of modern _OOP_ languages. Everything is divided into packages. [Google](https://about.google/intl/en_US/) technology has only _structs_ instead of _classes_.
+
+### Some companies that have adopted Golang:
+
+- Netflix
+- The Economist
+- IBM
+- GitHub
+- Uber
+- Docker
+- Dropbox
+- OpenShift
+- Twitter
+- [Complete list by country (link here)](https://github.com/golang/go/wiki/GoUsers)
+
+## About this project
+
+### Prerequisites
 
 - [Visual Studio Code](https://code.visualstudio.com/) or other IDE (Integrated Development Environment);
 - [Golang](https://golang.org/);
 
-## Preparing the environment
+### Preparing the environment
 
 The following technologies are critical for running/compiling application sources:
 
@@ -27,9 +60,9 @@ The following technologies are critical for running/compiling application source
 
     > go get -u github.com/nicksnyder/go-i18n/v2/goi18n
 
-## PostgreSql Database configuration
+### PostgreSql Database configuration
 
-### Connection Settings
+#### Connection Settings
 
 - HOST: **localhost**
 - PORT: **5435**
@@ -37,7 +70,7 @@ The following technologies are critical for running/compiling application source
 - PASSWORD: **postgres**
 - DATABASE NAME: **go_rest_db**
 
-### Create structure
+#### Create structure
 
 ```sql
 DROP SCHEMA IF EXISTS GO_TST CASCADE;
@@ -94,7 +127,7 @@ CREATE TABLE GO_TST.teacher
 );
 ```
 
-### Mock registers
+#### Mock registers
 
 ```sql
 -- PERSON --
@@ -249,9 +282,9 @@ VALUES (
 );
 ```
 
-## End points
+### End points
 
-### Course
+#### Course
 
 - [GET] - Find All - <http://localhost:8080/course>
 - [GET] - Find By ID - <http://localhost:8080/course/1>
@@ -260,30 +293,150 @@ VALUES (
   ```json
   Body Request:
   {
-    "id": 3,
     "name": "Name 3",
-    "description": "Description 3",
-    "registrationDate": "2019-10-30T19:54:20.060092Z"
+    "description": "Description 3"
+  }
+  ```
+
+- [PUT] - Update - <http://localhost:8080/course>
+
+  ```json
+  Body Request:
+  {
+    "id": 3,
+    "name": "New Name 3",
+    "description": "New Description 3"
   }
   ```
 
 - [DELETE] - Delete - <http://localhost:8080/course/3>
 
-### Class
+#### Class
 
 - [GET] - Find All - <http://localhost:8080/class>
 - [GET] - Find By ID - <http://localhost:8080/class/1>
+- [POST] - Insert - <http://localhost:8080/class>
 
-### Person
+  ```json
+  Body Request:
+  {
+    "course": {
+        "id": 3,
+        "registrationDate": "2019-10-20T15:00:00Z"
+    },
+    "startDate": "2019-10-20T15:00:00Z",
+    "endDate": "2019-10-25T18:30:00Z"
+  }
+  ```
+
+- [PUT] - Update - <http://localhost:8080/class>
+
+  ```json
+  Body Request:
+  {
+    "id": 3,
+    "course": {
+        "id": 2,
+        "registrationDate": "2019-10-26T19:54:20.060092Z"
+    },
+    "startDate": "2019-10-20T15:00:00Z",
+    "endDate": "2019-10-25T18:30:00Z"
+  }
+  ```
+
+- [DELETE] - Delete - <http://localhost:8080/class/3>
+
+#### Person
 
 - [GET] - Find All - <http://localhost:8080/person>
 
-### Student
+#### Student
 
 - [GET] - Find All - <http://localhost:8080/student>
 - [GET] - Find By ID - <http://localhost:8080/student/1>
+- [POST] - Insert - <http://localhost:8080/student>
 
-### Teacher
+  ```json
+  Body Request:
+  {
+      "person": {
+          "name": "Pessoa 7",
+          "cpf": "23456789888",
+          "cellPhone": "234567333",
+          "city": "Cidade 7",
+          "zipCode": "234566666",
+          "address": "Endereco 7",
+          "registrationDate": "2019-10-26T19:54:20.060092Z"
+      },
+      "class": {
+          "id": 1,
+          "course": {
+              "registrationDate": "0001-01-01T00:00:00Z"
+          },
+          "startDate": "0001-01-01T00:00:00Z",
+          "endDate": "0001-01-01T00:00:00Z",
+          "registrationDate": "0001-01-01T00:00:00Z"
+      }
+  }
+  ```
+
+- [PUT] - Update - <http://localhost:8080/student>
+
+  ```json
+  Body Request:
+  {
+      "person": {
+          "id": 3,
+          "name": "Pessoa 3",
+          "cpf": "23456789012",
+          "cellPhone": "234567890",
+          "city": "Cidade 3",
+          "zipCode": "23456789",
+          "address": "Endereco 3",
+          "registrationDate": "2019-10-26T19:54:20.060092Z"
+      },
+      "class": {
+          "id": 1,
+          "course": {
+              "registrationDate": "0001-01-01T00:00:00Z"
+          },
+          "startDate": "0001-01-01T00:00:00Z",
+          "endDate": "0001-01-01T00:00:00Z",
+          "registrationDate": "0001-01-01T00:00:00Z"
+      }
+  }
+  ```
+
+- [DELETE] - Delete - <http://localhost:8080/student/7>
+
+#### Teacher
 
 - [GET] - Find All - <http://localhost:8080/teacher>
 - [GET] - Find By ID - <http://localhost:8080/teacher/1>
+- [POST] - Insert - <http://localhost:8080/teacher>
+
+  ```json
+  Body Request:
+  {
+      "person": {
+          "name": "Pessoa 7",
+          "cpf": "56789012111",
+          "cellPhone": "567890888",
+          "city": "Cidade 7",
+          "zipCode": "56789000",
+          "address": "Endereco 7",
+          "registrationDate": "2019-10-26T19:54:20.060092Z"
+      },
+      "class": {
+          "id": 2,
+          "course": {
+              "registrationDate": "0001-01-01T00:00:00Z"
+          },
+          "startDate": "0001-01-01T00:00:00Z",
+          "endDate": "0001-01-01T00:00:00Z",
+          "registrationDate": "0001-01-01T00:00:00Z"
+      }
+  }
+  ```
+
+- [DELETE] - Delete - <http://localhost:8080/student/7>
