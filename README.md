@@ -60,6 +60,10 @@ The following technologies are critical for running/compiling application source
 
     > go get -u github.com/nicksnyder/go-i18n/v2/goi18n
 
+  - Install the [Validator](https://github.com/go-playground/validator)
+
+    > go get gopkg.in/go-playground/validator.v9
+
 ### PostgreSql Database configuration
 
 #### Connection Settings
