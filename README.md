@@ -39,8 +39,9 @@ GoLang intentionally leaves out many features of modern _OOP_ languages. Everyth
 
 ### Prerequisites
 
-- [Visual Studio Code](https://code.visualstudio.com/) or other IDE (Integrated Development Environment);
-- [Golang](https://golang.org/);
+- [Visual Studio Code](https://code.visualstudio.com/) or other IDE (Integrated Development Environment)
+- [Golang](https://golang.org/)
+- [Docker](https://hub.docker.com/search?offering=community&type=edition&operating_system=linux%2Cwindows)
 
 ### Preparing the environment
 
@@ -430,6 +431,33 @@ VALUES (
           "zipCode": "56789000",
           "address": "Endereco 7",
           "registrationDate": "2019-10-26T19:54:20.060092Z"
+      },
+      "class": {
+          "id": 2,
+          "course": {
+              "registrationDate": "0001-01-01T00:00:00Z"
+          },
+          "startDate": "0001-01-01T00:00:00Z",
+          "endDate": "0001-01-01T00:00:00Z",
+          "registrationDate": "0001-01-01T00:00:00Z"
+      }
+  }
+  ```
+
+- [PUT] - Insert - <http://localhost:8080/teacher>
+
+  ```json
+  Body Request:
+  {
+      "person": {
+          "id": 7
+          "name": "New Pessoa 7",
+          "cpf": "56789012111",
+          "cellPhone": "567890888",
+          "city": "New Cidade 7",
+          "zipCode": "56789000",
+          "address": "New Endereco 7",
+          "registrationDate": "2019-10-30T19:54:20.060092Z"
       },
       "class": {
           "id": 2,

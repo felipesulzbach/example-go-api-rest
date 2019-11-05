@@ -13,7 +13,7 @@ import (
 
 const (
   host     = "localhost"
-  port     = 5435
+  port     = 5432
   user     = "postgres"
   password = "postgres"
   dbname   = "go_rest_db"
