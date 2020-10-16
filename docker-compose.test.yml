@@ -3,15 +3,21 @@ version: '3.7'
 services:
   db:
     image: postgres
+    container_name: db_postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: go_rest_db
     ports:
         - 5432:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-U", "postgres"]
+      timeout: 10s
+      retries: 5
 
   db-admin:
     image: dpage/pgadmin4
+    container_name: pgadmin4
     restart: always
     ports:
         - 9090:80
