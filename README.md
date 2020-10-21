@@ -78,12 +78,12 @@ The following technologies are critical for running/compiling application source
 #### Create structure
 
 ```sql
-DROP SCHEMA IF EXISTS GO_TST CASCADE;
+DROP SCHEMA IF EXISTS fs_auto CASCADE;
 
-CREATE SCHEMA GO_TST;
+CREATE SCHEMA fs_auto;
 
 -- PERSON --
-CREATE TABLE GO_TST.person
+CREATE TABLE fs_auto.person
 (id numeric NOT NULL
 ,name character varying(255)
 ,cpf character varying(20)
@@ -95,7 +95,7 @@ CREATE TABLE GO_TST.person
 ,CONSTRAINT pk_person PRIMARY KEY (id));
 
 -- COURSE --
-CREATE TABLE GO_TST.course
+CREATE TABLE fs_auto.course
 (id numeric NOT NULL
 ,name character varying(255)
 ,description character varying(255)
@@ -103,32 +103,32 @@ CREATE TABLE GO_TST.course
 ,CONSTRAINT pk_course PRIMARY KEY (id));
 
 -- CLASS --
-CREATE TABLE GO_TST.class
+CREATE TABLE fs_auto.class
 (id numeric NOT NULL
 ,course_id numeric NOT NULL
 ,start_date timestamp
 ,end_date timestamp
 ,registration_date timestamp
 ,CONSTRAINT pk_class PRIMARY KEY (id)
-,CONSTRAINT fk_class_course FOREIGN KEY (course_id) REFERENCES GO_TST.course (id));
-CREATE INDEX idx_class_course ON GO_TST.class(course_id);
+,CONSTRAINT fk_class_course FOREIGN KEY (course_id) REFERENCES fs_auto.course (id));
+CREATE INDEX idx_class_course ON fs_auto.class(course_id);
 
 -- STUDENT --
-CREATE TABLE GO_TST.student
+CREATE TABLE fs_auto.student
 (person_id numeric NOT NULL
 ,class_id numeric NOT NULL
 ,CONSTRAINT pk_student PRIMARY KEY (person_id, class_id)
-,CONSTRAINT fk_student_person FOREIGN KEY (person_id) REFERENCES GO_TST.person (id)
-,CONSTRAINT fk_student_class FOREIGN KEY (class_id) REFERENCES GO_TST.class (id)
+,CONSTRAINT fk_student_person FOREIGN KEY (person_id) REFERENCES fs_auto.person (id)
+,CONSTRAINT fk_student_class FOREIGN KEY (class_id) REFERENCES fs_auto.class (id)
 );
 
 -- TEACHER --
-CREATE TABLE GO_TST.teacher
+CREATE TABLE fs_auto.teacher
 (person_id numeric NOT NULL
 ,course_id numeric NOT NULL
 ,CONSTRAINT pk_teacher PRIMARY KEY (person_id, course_id)
-,CONSTRAINT fk_teacher_person FOREIGN KEY (person_id) REFERENCES GO_TST.person (id)
-,CONSTRAINT fk_teacher_course FOREIGN KEY (course_id) REFERENCES GO_TST.course (id)
+,CONSTRAINT fk_teacher_person FOREIGN KEY (person_id) REFERENCES fs_auto.person (id)
+,CONSTRAINT fk_teacher_course FOREIGN KEY (course_id) REFERENCES fs_auto.course (id)
 );
 ```
 
@@ -136,7 +136,7 @@ CREATE TABLE GO_TST.teacher
 
 ```sql
 -- PERSON --
-INSERT INTO GO_TST.person (id,name,cpf,cell_phone,city,zip_code,address,registration_date)
+INSERT INTO fs_auto.person (id,name,cpf,cell_phone,city,zip_code,address,registration_date)
 VALUES (
     1 --id
    ,'Pessoa 1' --name
@@ -148,7 +148,7 @@ VALUES (
    ,now() --registration_date
 );
 ------------
-INSERT INTO GO_TST.person (id,name,cpf,cell_phone,city,zip_code,address,registration_date)
+INSERT INTO fs_auto.person (id,name,cpf,cell_phone,city,zip_code,address,registration_date)
 VALUES (
     2 --id
    ,'Pessoa 2' --name
@@ -160,7 +160,7 @@ VALUES (
    ,now() --registration_date
 );
 ------------
-INSERT INTO GO_TST.person (id,name,cpf,cell_phone,city,zip_code,address,registration_date)
+INSERT INTO fs_auto.person (id,name,cpf,cell_phone,city,zip_code,address,registration_date)
 VALUES (
     3 --id
    ,'Pessoa 3' --name
@@ -172,7 +172,7 @@ VALUES (
    ,now() --registration_date
 );
 ------------
-INSERT INTO GO_TST.person (id,name,cpf,cell_phone,city,zip_code,address,registration_date)
+INSERT INTO fs_auto.person (id,name,cpf,cell_phone,city,zip_code,address,registration_date)
 VALUES (
     4 --id
    ,'Pessoa 4' --name
@@ -184,7 +184,7 @@ VALUES (
    ,now() --registration_date
 );
 ------------
-INSERT INTO GO_TST.person (id,name,cpf,cell_phone,city,zip_code,address,registration_date)
+INSERT INTO fs_auto.person (id,name,cpf,cell_phone,city,zip_code,address,registration_date)
 VALUES (
     5 --id
    ,'Pessoa 5' --name
@@ -196,7 +196,7 @@ VALUES (
    ,now() --registration_date
 );
 ------------
-INSERT INTO GO_TST.person (id,name,cpf,cell_phone,city,zip_code,address,registration_date)
+INSERT INTO fs_auto.person (id,name,cpf,cell_phone,city,zip_code,address,registration_date)
 VALUES (
     6 --id
    ,'Pessoa 6' --name
@@ -210,7 +210,7 @@ VALUES (
 
 
 -- COURSE --
-INSERT INTO GO_TST.course (id,name,description,registration_date)
+INSERT INTO fs_auto.course (id,name,description,registration_date)
 VALUES (
     1 --id
    ,'Nome 1' --name
@@ -218,7 +218,7 @@ VALUES (
    ,now() --registration_date
 );
 ------------
-INSERT INTO GO_TST.course (id,name,description,registration_date)
+INSERT INTO fs_auto.course (id,name,description,registration_date)
 VALUES (
     2 --id
    ,'Nome 2' --name
@@ -228,7 +228,7 @@ VALUES (
 
 
 -- CLASS --
-INSERT INTO GO_TST.class (id,course_id,start_date,end_date,registration_date)
+INSERT INTO fs_auto.class (id,course_id,start_date,end_date,registration_date)
 VALUES (
     1 --id
    ,1 --course_id
@@ -237,7 +237,7 @@ VALUES (
    ,now() --registration_date
 );
 -----------
-INSERT INTO GO_TST.class (id,course_id,start_date,end_date,registration_date)
+INSERT INTO fs_auto.class (id,course_id,start_date,end_date,registration_date)
 VALUES (
     2 --id
    ,2 --course_id
@@ -248,13 +248,13 @@ VALUES (
 
 
 -- TEACHER --
-INSERT INTO GO_TST.teacher (person_id,course_id)
+INSERT INTO fs_auto.teacher (person_id,course_id)
 VALUES (
     1 --person_id
    ,1 --course_id
 );
 -------------
-INSERT INTO GO_TST.teacher (person_id,course_id)
+INSERT INTO fs_auto.teacher (person_id,course_id)
 VALUES (
     2 --person_id
    ,2 --course_id
@@ -262,25 +262,25 @@ VALUES (
 
 
 -- STUDENT --
-INSERT INTO GO_TST.student (person_id,class_id)
+INSERT INTO fs_auto.student (person_id,class_id)
 VALUES (
     3 --person_id
    ,1 --class_id
 );
 -------------
-INSERT INTO GO_TST.student (person_id,class_id)
+INSERT INTO fs_auto.student (person_id,class_id)
 VALUES (
     4 --person_id
    ,1 --class_id
 );
 -------------
-INSERT INTO GO_TST.student (person_id,class_id)
+INSERT INTO fs_auto.student (person_id,class_id)
 VALUES (
     5 --person_id
    ,2 --class_id
 );
 -------------
-INSERT INTO GO_TST.student (person_id,class_id)
+INSERT INTO fs_auto.student (person_id,class_id)
 VALUES (
     6 --person_id
    ,2 --class_id

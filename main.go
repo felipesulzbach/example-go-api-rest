@@ -10,13 +10,11 @@ import (
 	"time"
 
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/controller"
-	"github.com/felipesulzbach/exemplo-api-rest/app/src/migrate"
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/repository"
+	"github.com/felipesulzbach/exemplo-api-rest/migrate"
 	"github.com/gorilla/mux"
 
 )
-
-// https://medium.com/@ishagirdhar/a-simple-restful-web-server-using-golang-mysql-gorilla-mux-53f1568d22e5
 
 func main() {
 	log.Println("SERVER Starting...")
@@ -46,10 +44,10 @@ func bootHTTPServer() *http.Server {
 	controller.CreateRouters(&routerWS)
 
 	log.Println("SERVER Successfully started!")
-	log.Fatal(http.ListenAndServe(controller.Domain, &routerWS))
+	log.Fatal(http.ListenAndServe(controller.APIDomain, &routerWS))
 
 	srv := &http.Server{
-		Addr:         controller.Domain,
+		Addr:         controller.APIDomain,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,

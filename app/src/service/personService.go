@@ -1,7 +1,6 @@
 package service
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 
@@ -9,20 +8,12 @@ import (
 
 )
 
-// FindAllPerson - Returns total list of registered persons.
+// FindAllPerson ...
 func FindAllPerson(w http.ResponseWriter, r *http.Request) {
-	db, err := repository.NewDB()
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		log.Panic(err)
-		return
-	}
-
-	list, err := db.FindAllPerson()
+	list, err := repository.FindAllPerson()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		db.CloseDB()
 		return
 	}
 
@@ -30,6 +21,5 @@ func FindAllPerson(w http.ResponseWriter, r *http.Request) {
 		log.Println(item.ToString())
 	}
 
-	db.CloseDB()
-	json.NewEncoder(w).Encode(list)
+	jsonOkResponse(w, list)
 }

@@ -1,25 +1,21 @@
 package repository
 
 import (
+	"log"
+
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
 
 )
 
-// NextIDPerson - Returns the next ID.
-func (db *DB) NextIDPerson() (int64, error) {
-	row := db.QueryRow("SELECT (MAX(id) + 1) FROM GO_TST.person")
-
-	var id int64
-	err := row.Scan(&id)
+// FindAllPerson ...
+func FindAllPerson() ([]*model.Person, error) {
+	db, err := newDB()
 	if err != nil {
-		return 0, err
+		log.Panic(err)
+		return nil, err
 	}
-	return id, nil
-}
 
-// FindAllPerson - Returns total list of registered persons.
-func (db *DB) FindAllPerson() ([]*model.Person, error) {
-	rows, err := db.Query("SELECT * FROM GO_TST.person")
+	rows, err := db.Query("SELECT * FROM fs_auto.person")
 	if err != nil {
 		return nil, err
 	}
@@ -37,39 +33,61 @@ func (db *DB) FindAllPerson() ([]*model.Person, error) {
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
+
+	db.closeDB()
 	return list, nil
 }
 
-// FindByIDPerson - Returns a specific person by ID.
-func (db *DB) FindByIDPerson(id int64) (*model.Person, error) {
-	row := db.QueryRow("SELECT * FROM GO_TST.person WHERE id=$1", id)
-
-	item := new(model.Person)
-	err := row.Scan(&item.ID, &item.Name, &item.Cpf, &item.CellPhone, &item.City, &item.ZipCode, &item.Address, &item.RegistrationDate)
+// FindByIDPerson ...
+func FindByIDPerson(id int64) (*model.Person, error) {
+	db, err := newDB()
 	if err != nil {
+		log.Panic(err)
 		return nil, err
 	}
+
+	row := db.QueryRow("SELECT * FROM fs_auto.person WHERE id=$1", id)
+
+	item := new(model.Person)
+	if err := row.Scan(&item.ID, &item.Name, &item.Cpf, &item.CellPhone, &item.City, &item.ZipCode, &item.Address, &item.RegistrationDate); err != nil {
+		return nil, err
+	}
+
+	db.closeDB()
 	return item, nil
 }
 
-// InsertPerson - Inserts a new person record in the data base.
-func (db *DB) InsertPerson(modely model.Person) (int64, error) {
-	sqlStatement := "INSERT INTO GO_TST.person (id, name, cpf, cell_phone, city, zip_code, address, registration_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id"
-	var returnedID int64
-	err := db.QueryRow(sqlStatement, modely.ID, modely.Name, modely.Cpf, modely.CellPhone, modely.City, modely.ZipCode, modely.Address, modely.RegistrationDate).Scan(&returnedID)
+// InsertPerson ...
+func InsertPerson(entity model.Person) (int64, error) {
+	db, err := newDB()
 	if err != nil {
+		log.Panic(err)
 		return 0, err
 	}
 
-	return returnedID, nil
+	sqlStatement := "INSERT INTO fs_auto.person (name, cpf, cell_phone, city, zip_code, address, registration_date) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id"
+	var id int64
+	if err := db.QueryRow(sqlStatement, entity.Name, entity.Cpf, entity.CellPhone, entity.City, entity.ZipCode, entity.Address, entity.RegistrationDate).Scan(&id); err != nil {
+		return 0, err
+	}
+
+	db.closeDB()
+	return id, nil
 }
 
-// UpdatePerson - Updates a base class record.
-func (db *DB) UpdatePerson(modely model.Person) error {
-	sqlStatement := "UPDATE GO_TST.person SET name=$2, cpf=$3, cell_phone=$4, city=$5, zip_code=$6, address=$7, registration_date=$8 WHERE id=$1"
-	_, err := db.Exec(sqlStatement, modely.ID, modely.Name, modely.Cpf, modely.CellPhone, modely.City, modely.ZipCode, modely.Address, modely.RegistrationDate)
+// UpdatePerson ...
+func UpdatePerson(entity model.Person) error {
+	db, err := newDB()
 	if err != nil {
+		log.Panic(err)
 		return err
 	}
+
+	sqlStatement := "UPDATE fs_auto.person SET name=$1, cpf=$2, cell_phone=$3, city=$4, zip_code=$5, address=$6, registration_date=$7 WHERE id=$1"
+	if _, err := db.Exec(sqlStatement, entity.ID, entity.Name, entity.Cpf, entity.CellPhone, entity.City, entity.ZipCode, entity.Address, entity.RegistrationDate); err != nil {
+		return err
+	}
+
+	db.closeDB()
 	return nil
 }

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -28,4 +29,19 @@ func (po deletePO) Delete(w http.ResponseWriter, r *http.Request, db *repository
 		return err
 	}
 	return nil
+}
+
+func jsonOkResponse(w http.ResponseWriter, value interface{}) {
+	jsonResponse(w, value, 200)
+}
+
+func jsonCreatedResponse(w http.ResponseWriter, value interface{}) {
+	jsonResponse(w, value, 201)
+}
+
+func jsonResponse(w http.ResponseWriter, value interface{}, code int) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(value)
 }

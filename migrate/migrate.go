@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/felipesulzbach/exemplo-api-rest/app/src/repository"
+	"github.com/felipesulzbach/exemplo-api-rest/migrate/repository"
 	"github.com/felipesulzbach/exemplo-files-process/util"
 
 )
@@ -27,7 +27,7 @@ type file struct {
 func LoadDatabaseStructure() {
 	log.Println("Starting migration...")
 
-	db, err := repository.NewDB()
+	db, err := repository.OpenDB()
 	if err != nil {
 		log.Panic(err)
 	}
@@ -58,7 +58,7 @@ func LoadDatabaseStructure() {
 			log.Panic(err)
 		}
 
-		log.Printf("Migrate %s.\n", item.filePath)
+		log.Printf(">>> %s.\n", item.filePath)
 	}
 
 	db.CloseDB()

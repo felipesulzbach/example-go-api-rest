@@ -14,9 +14,9 @@ import (
 
 )
 
-// FindAllTeacher ...
-func FindAllTeacher(w http.ResponseWriter, r *http.Request) {
-	list, err := repository.FindAllTeacher()
+// FindAllSchoolClass ...
+func FindAllSchoolClass(w http.ResponseWriter, r *http.Request) {
+	list, err := repository.FindAllSchoolClass()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
@@ -30,8 +30,8 @@ func FindAllTeacher(w http.ResponseWriter, r *http.Request) {
 	jsonOkResponse(w, list)
 }
 
-// FindByIDTeacher ...
-func FindByIDTeacher(w http.ResponseWriter, r *http.Request) {
+// FindByIDSchoolClass ...
+func FindByIDSchoolClass(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.ParseInt(params["id"], 10, 64)
 	if err != nil {
@@ -40,7 +40,7 @@ func FindByIDTeacher(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entity, err := repository.FindByIDTeacher(id)
+	entity, err := repository.FindByIDSchoolClass(id)
 	switch {
 	case err == sql.ErrNoRows:
 		var errorDesc bytes.Buffer
@@ -59,33 +59,34 @@ func FindByIDTeacher(w http.ResponseWriter, r *http.Request) {
 	jsonOkResponse(w, entity)
 }
 
-// InsertTeacher ...
-func InsertTeacher(w http.ResponseWriter, r *http.Request) {
-	var entity model.Teacher
+// InsertSchoolClass ...
+func InsertSchoolClass(w http.ResponseWriter, r *http.Request) {
+	var entity model.SchoolClass
 	_ = json.NewDecoder(r.Body).Decode(&entity)
 
-	id, err := repository.InsertTeacher(entity)
+	id, err := repository.InsertSchoolClass(entity)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		return
 	}
+
 	jsonCreatedResponse(w, id)
 }
 
-// UpdateTeacher ...
-func UpdateTeacher(w http.ResponseWriter, r *http.Request) {
-	var entity model.Teacher
+// UpdateSchoolClass ...
+func UpdateSchoolClass(w http.ResponseWriter, r *http.Request) {
+	var entity model.SchoolClass
 	_ = json.NewDecoder(r.Body).Decode(&entity)
 
-	if err := repository.UpdateTeacher(entity); err != nil {
+	if err := repository.UpdateSchoolClass(entity); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		return
 	}
 }
 
-// DeleteTeacher ...
-func DeleteTeacher(w http.ResponseWriter, r *http.Request) {
+// DeleteSchoolClass ...
+func DeleteSchoolClass(w http.ResponseWriter, r *http.Request) {
 	// TODO
 }

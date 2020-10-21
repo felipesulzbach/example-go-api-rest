@@ -1,13 +1,21 @@
 package repository
 
 import (
+	"log"
+
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
 
 )
 
-// FindAllTeacher - Returns total list of registered teachers.
-func (db *DB) FindAllTeacher() ([]*model.Teacher, error) {
-	rows, err := db.Query("SELECT * FROM GO_TST.teacher")
+// FindAllTeacher ...
+func FindAllTeacher() ([]*model.Teacher, error) {
+	db, err := newDB()
+	if err != nil {
+		log.Panic(err)
+		return nil, err
+	}
+
+	rows, err := db.Query("SELECT * FROM fs_auto.teacher")
 	if err != nil {
 		return nil, err
 	}
@@ -25,43 +33,60 @@ func (db *DB) FindAllTeacher() ([]*model.Teacher, error) {
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
+
+	db.closeDB()
 	return list, nil
 }
 
-// FindByIDTeacher - Returns a specific teacher by ID.
-func (db *DB) FindByIDTeacher(id int64) (*model.Teacher, error) {
-	row := db.QueryRow("SELECT * FROM GO_TST.teacher WHERE id=$1", id)
-
-	item := new(model.Teacher)
-	err := row.Scan(&item.Person.ID, &item.Course.ID)
+// FindByIDTeacher ...
+func FindByIDTeacher(id int64) (*model.Teacher, error) {
+	db, err := newDB()
 	if err != nil {
+		log.Panic(err)
 		return nil, err
 	}
+
+	row := db.QueryRow("SELECT * FROM fs_auto.teacher WHERE id=$1", id)
+	item := new(model.Teacher)
+	if err := row.Scan(&item.Person.ID, &item.Course.ID); err != nil {
+		return nil, err
+	}
+
+	db.closeDB()
 	return item, nil
 }
 
-// InsertTeacher - Inserts a new class record in the data base.
-func (db *DB) InsertTeacher(modely model.Teacher) (int64, error) {
-	sqlStatement := "INSERT INTO GO_TST.teacher (person_id, course_id) VALUES ($1, $2) RETURNING person_id"
-	var returnedID int64
-	err := db.QueryRow(sqlStatement, modely.Person.ID, modely.Course.ID).Scan(&returnedID)
+// InsertTeacher ...
+func InsertTeacher(entity model.Teacher) (int64, error) {
+	db, err := newDB()
 	if err != nil {
+		log.Panic(err)
 		return 0, err
 	}
 
+	sqlStatement := "INSERT INTO fs_auto.teacher (course_id) VALUES ($1) RETURNING id"
+	var returnedID int64
+	if err := db.QueryRow(sqlStatement, entity.Course.ID).Scan(&returnedID); err != nil {
+		return 0, err
+	}
+
+	db.closeDB()
 	return returnedID, nil
 }
 
-// UpdateTeacher - Updates a base teacher record.
-func (db *DB) UpdateTeacher(modely model.Teacher) error {
-	sqlStatement := "UPDATE GO_TST.teacher SET course_id=$2 WHERE person_id=$1"
-	_, err := db.Exec(sqlStatement, modely.Person.ID, modely.Course.ID)
+// UpdateTeacher ...
+func UpdateTeacher(entity model.Teacher) error {
+	db, err := newDB()
 	if err != nil {
+		log.Panic(err)
 		return err
 	}
 
-	if err = db.UpdatePerson(modely.Person); err != nil {
+	sqlStatement := "UPDATE fs_auto.teacher SET course_id=$1 WHERE id=$1"
+	if _, err := db.Exec(sqlStatement, entity.Course.ID); err != nil {
 		return err
 	}
+
+	db.closeDB()
 	return nil
 }

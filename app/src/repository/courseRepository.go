@@ -1,25 +1,21 @@
 package repository
 
 import (
+	"log"
+
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
 
 )
 
-// NextIDCourse - Returns the next ID.
-func (db *DB) NextIDCourse() (int64, error) {
-	row := db.QueryRow("SELECT (MAX(id) + 1) FROM GO_TST.course")
-
-	var id int64
-	err := row.Scan(&id)
+// FindAllCourse ...
+func FindAllCourse() ([]*model.Course, error) {
+	db, err := newDB()
 	if err != nil {
-		return 0, err
+		log.Panic(err)
+		return nil, err
 	}
-	return id, nil
-}
 
-// FindAllCourse - Returns total list of registered courses.
-func (db *DB) FindAllCourse() ([]*model.Course, error) {
-	rows, err := db.Query("SELECT * FROM GO_TST.course")
+	rows, err := db.Query("SELECT * FROM fs_auto.course")
 	if err != nil {
 		return nil, err
 	}
@@ -37,39 +33,61 @@ func (db *DB) FindAllCourse() ([]*model.Course, error) {
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
+
+	db.closeDB()
 	return list, nil
 }
 
-// FindByIDCourse - Returns a specific course by ID.
-func (db *DB) FindByIDCourse(id int64) (*model.Course, error) {
-	row := db.QueryRow("SELECT * FROM GO_TST.course WHERE id=$1", id)
-
-	item := new(model.Course)
-	err := row.Scan(&item.ID, &item.Name, &item.Description, &item.RegistrationDate)
+// FindByIDCourse ...
+func FindByIDCourse(id int64) (*model.Course, error) {
+	db, err := newDB()
 	if err != nil {
+		log.Panic(err)
 		return nil, err
 	}
+
+	row := db.QueryRow("SELECT * FROM fs_auto.course WHERE id=$1", id)
+
+	item := new(model.Course)
+	if err := row.Scan(&item.ID, &item.Name, &item.Description, &item.RegistrationDate); err != nil {
+		return nil, err
+	}
+
+	db.closeDB()
 	return item, nil
 }
 
-// InsertCourse - Inserts a new class record in the data base.
-func (db *DB) InsertCourse(modely model.Course) (int64, error) {
-	sqlStatement := "INSERT INTO GO_TST.course (id, name, description, registration_date) VALUES ($1, $2, $3, $4) RETURNING id"
-	var returnedID int64
-	err := db.QueryRow(sqlStatement, modely.ID, modely.Name, modely.Description, modely.RegistrationDate).Scan(&returnedID)
+// InsertCourse ...
+func InsertCourse(entity model.Course) (int64, error) {
+	db, err := newDB()
 	if err != nil {
+		log.Panic(err)
 		return 0, err
 	}
 
-	return returnedID, nil
+	sqlStatement := "INSERT INTO fs_auto.course (name, description, registration_date) VALUES ($1, $2, $3) RETURNING id"
+	var id int64
+	if err := db.QueryRow(sqlStatement, entity.Name, entity.Description, entity.RegistrationDate).Scan(&id); err != nil {
+		return 0, err
+	}
+
+	db.closeDB()
+	return id, nil
 }
 
-// UpdateCourse - Updates a base class record.
-func (db *DB) UpdateCourse(modely model.Course) error {
-	sqlStatement := "UPDATE GO_TST.course SET name=$2, description=$3, registration_date=$4 WHERE id=$1"
-	_, err := db.Exec(sqlStatement, modely.ID, modely.Name, modely.Description, modely.RegistrationDate)
+// UpdateCourse ...
+func UpdateCourse(entity model.Course) error {
+	db, err := newDB()
 	if err != nil {
+		log.Panic(err)
 		return err
 	}
+
+	sqlStatement := "UPDATE fs_auto.course SET name=$1, description=$2, registration_date=$3 WHERE id=$1"
+	if _, err := db.Exec(sqlStatement, entity.ID, entity.Name, entity.Description, entity.RegistrationDate); err != nil {
+		return err
+	}
+
+	db.closeDB()
 	return nil
 }

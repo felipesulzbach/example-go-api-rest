@@ -14,21 +14,13 @@ import (
 
 )
 
-// FindAllCourse - Returns total list of registered courses.
+// FindAllCourse ...
 func FindAllCourse(w http.ResponseWriter, r *http.Request) {
-	db, err := repository.NewDB()
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		log.Panic(err)
-		return
-	}
-
 	//	list, err := env.db.FindAllCourse()
-	list, err := db.FindAllCourse()
+	list, err := repository.FindAllCourse()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		db.CloseDB()
 		return
 	}
 
@@ -36,30 +28,21 @@ func FindAllCourse(w http.ResponseWriter, r *http.Request) {
 		log.Println(item.ToString())
 	}
 
-	db.CloseDB()
-	json.NewEncoder(w).Encode(list)
+	jsonOkResponse(w, list)
 }
 
-// FindByIDCourse - Returns a specific course by ID.
+// FindByIDCourse ...
 func FindByIDCourse(w http.ResponseWriter, r *http.Request) {
-	db, err := repository.NewDB()
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		log.Panic(err)
-		return
-	}
-
 	params := mux.Vars(r)
 	//id := r.FormValue("id")
 	id, err := strconv.ParseInt(params["id"], 10, 64)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		db.CloseDB()
 		return
 	}
 
-	modely, err := db.FindByIDCourse(id)
+	entity, err := repository.FindByIDCourse(id)
 	switch {
 	case err == sql.ErrNoRows:
 		var errorDesc bytes.Buffer
@@ -67,88 +50,44 @@ func FindByIDCourse(w http.ResponseWriter, r *http.Request) {
 		errorDesc.WriteString(strconv.FormatInt(id, 10))
 		log.Println(errorDesc.String())
 		json.NewEncoder(w).Encode(errorDesc.String())
-		db.CloseDB()
 		return
 	case err != nil:
 		log.Panic(err)
-		db.CloseDB()
 		return
 	default:
 	}
 
-	log.Println(modely.ToString())
-	db.CloseDB()
-	json.NewEncoder(w).Encode(modely)
+	log.Println(entity.ToString())
+	jsonOkResponse(w, entity)
 }
 
-// InsertCourse - Inserts a new course record in the data base.
+// InsertCourse ...
 func InsertCourse(w http.ResponseWriter, r *http.Request) {
-	db, err := repository.NewDB()
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		log.Panic(err)
-		return
-	}
+	var entity model.Course
+	_ = json.NewDecoder(r.Body).Decode(&entity)
 
-	id, err := db.NextIDCourse()
+	idReturned, err := repository.InsertCourse(entity)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		db.CloseDB()
 		return
 	}
-
-	var modely model.Course
-	_ = json.NewDecoder(r.Body).Decode(&modely)
-	modely.ID = id
-
-	idReturned, err := db.InsertCourse(modely)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		db.CloseDB()
-		return
-	}
-	db.CloseDB()
-	json.NewEncoder(w).Encode(idReturned)
+	jsonCreatedResponse(w, idReturned)
 }
 
-// UpdateCourse - Updates a base course record.
+// UpdateCourse ...
 func UpdateCourse(w http.ResponseWriter, r *http.Request) {
-	db, err := repository.NewDB()
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		log.Panic(err)
-		return
-	}
+	var entity model.Course
+	_ = json.NewDecoder(r.Body).Decode(&entity)
 
-	var modely model.Course
-	_ = json.NewDecoder(r.Body).Decode(&modely)
-
-	if err = db.UpdateCourse(modely); err != nil {
+	if err := repository.UpdateCourse(entity); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
-		db.CloseDB()
 		return
 	}
-	db.CloseDB()
 }
 
-// DeleteCourse - Removes a record from the base.
+// DeleteCourse ...
 func DeleteCourse(w http.ResponseWriter, r *http.Request) {
-	db, err := repository.NewDB()
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		log.Panic(err)
-		return
-	}
-
-	delPO := deletePO{"course", "id", "id"}
-	if err := delPO.Delete(w, r, db); err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		db.CloseDB()
-		return
-	}
-	db.CloseDB()
+	// TODO
 }

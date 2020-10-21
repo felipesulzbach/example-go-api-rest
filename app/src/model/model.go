@@ -1,39 +1,39 @@
 package model
 
 import (
-	"bytes"
+	"encoding/json"
+	"log"
 
 )
 
-// SeparatorEntityFront - Used to separate entity information.
-const SeparatorEntityFront = ": '"
+type entityModel struct {
+}
 
-// SeparatorEntityBehind - Used to separate entity information.
-const SeparatorEntityBehind = "', "
-
-// SeparatorEntityBehind2 - Used to separate entity information.
-const SeparatorEntityBehind2 = "'"
-
-// ToString - Returns string with entity information.
-func ToString(entityName string, fields map[string]string) string {
-	var buffer bytes.Buffer
-	buffer.WriteString("[")
-	buffer.WriteString(entityName)
-	buffer.WriteString(" = {")
-
-	total := len(fields)
-	count := 0
-	for field, valueField := range fields {
-		buffer.WriteString(field)
-		buffer.WriteString(SeparatorEntityFront)
-		buffer.WriteString(valueField)
-		count++
-		if total != count {
-			buffer.WriteString(SeparatorEntityBehind)
-		} else {
-			buffer.WriteString(SeparatorEntityBehind2)
-		}
+// Decoder - Convert JSON to structure.
+func (entity *entityModel) Decoder(jsonStream string) error {
+	if err := json.Unmarshal([]byte(jsonStream), &entity); err != nil {
+		return err
 	}
-	buffer.WriteString("}]")
-	return buffer.String()
+	return nil
+}
+
+// Encoder - Convert structure to JSON.
+func (entity *entityModel) Encoder() ([]byte, error) {
+	result, err := json.Marshal(entity)
+	if err != nil {
+		log.Fatalln(err)
+		return nil, err
+	}
+
+	return result, nil
+}
+
+// ToString ...
+func (entity *entityModel) ToString() (string, error) {
+	result, err := entity.Encoder()
+	if err != nil {
+		return "", err
+	}
+
+	return string(result), nil
 }

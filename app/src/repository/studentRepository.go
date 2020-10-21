@@ -1,13 +1,21 @@
 package repository
 
 import (
+	"log"
+
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
 
 )
 
-// FindAllStudent - Returns total list of registered students.
-func (db *DB) FindAllStudent() ([]*model.Student, error) {
-	rows, err := db.Query("SELECT * FROM GO_TST.student")
+// FindAllStudent ...
+func FindAllStudent() ([]*model.Student, error) {
+	db, err := newDB()
+	if err != nil {
+		log.Panic(err)
+		return nil, err
+	}
+
+	rows, err := db.Query("SELECT * FROM fs_auto.student")
 	if err != nil {
 		return nil, err
 	}
@@ -16,7 +24,7 @@ func (db *DB) FindAllStudent() ([]*model.Student, error) {
 	list := make([]*model.Student, 0)
 	for rows.Next() {
 		item := new(model.Student)
-		err := rows.Scan(&item.Person.ID, &item.Class.ID)
+		err := rows.Scan(&item.Person.ID, &item.SchoolClass.ID)
 		if err != nil {
 			return nil, err
 		}
@@ -25,67 +33,60 @@ func (db *DB) FindAllStudent() ([]*model.Student, error) {
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
+
+	db.closeDB()
 	return list, nil
 }
 
-// NextIDStudent - Returns the next ID.
-func (db *DB) NextIDStudent() ([]*model.Student, error) {
-	rows, err := db.Query("SELECT * FROM GO_TST.student")
+// FindByIDStudent ...
+func FindByIDStudent(id int64) (*model.Student, error) {
+	db, err := newDB()
 	if err != nil {
+		log.Panic(err)
 		return nil, err
 	}
-	defer rows.Close()
 
-	list := make([]*model.Student, 0)
-	for rows.Next() {
-		item := new(model.Student)
-		err := rows.Scan(&item.Person.ID, &item.Class.ID)
-		if err != nil {
-			return nil, err
-		}
-		list = append(list, item)
-	}
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-	return list, nil
-}
-
-// FindByIDStudent - Returns a specific student by ID.
-func (db *DB) FindByIDStudent(id int64) (*model.Student, error) {
-	row := db.QueryRow("SELECT * FROM GO_TST.student WHERE person_id=$1", id)
+	row := db.QueryRow("SELECT * FROM fs_auto.student WHERE id=$1", id)
 	item := new(model.Student)
-	err := row.Scan(&item.Person.ID, &item.Class.ID)
-	if err != nil {
+	if err := row.Scan(&item.Person.ID, &item.SchoolClass.ID); err != nil {
 		return nil, err
 	}
+
+	db.closeDB()
 	return item, nil
 }
 
-// InsertStudent - Inserts a new student record in the data base.
-func (db *DB) InsertStudent(modely model.Student) (int64, error) {
-	sqlStatement := "INSERT INTO GO_TST.student (person_id, class_id) VALUES ($1, $2) RETURNING person_id"
-	var returnedID int64
-	err := db.QueryRow(sqlStatement, modely.Person.ID, modely.Class.ID).Scan(&returnedID)
+// InsertStudent ...
+func InsertStudent(entity model.Student) (int64, error) {
+	db, err := newDB()
 	if err != nil {
+		log.Panic(err)
 		return 0, err
 	}
 
-	return returnedID, nil
+	sqlStatement := "INSERT INTO fs_auto.student (school_class_id) VALUES ($1) RETURNING id"
+	var id int64
+	if err := db.QueryRow(sqlStatement, entity.SchoolClass.ID).Scan(&id); err != nil {
+		return 0, err
+	}
+
+	db.closeDB()
+	return id, nil
 }
 
-// UpdateStudent - Updates a base student record.
-func (db *DB) UpdateStudent(modely model.Student) error {
-	sqlStatement := "UPDATE GO_TST.student SET class_id=$2 WHERE person_id=$1"
-	_, err := db.Exec(sqlStatement, modely.Person.ID, modely.Class.ID)
+// UpdateStudent ...
+func UpdateStudent(entity model.Student) error {
+	db, err := newDB()
 	if err != nil {
+		log.Panic(err)
 		return err
 	}
-	if err = db.UpdatePerson(modely.Person); err != nil {
+
+	sqlStatement := "UPDATE fs_auto.student SET school_class_id=$1 WHERE id=$1"
+	if _, err := db.Exec(sqlStatement, entity.Person.ID, entity.SchoolClass.ID); err != nil {
 		return err
 	}
-	if err = db.UpdateClass(modely.Class); err != nil {
-		return err
-	}
+
+	db.closeDB()
 	return nil
 }

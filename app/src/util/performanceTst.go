@@ -75,7 +75,7 @@ func TesteCreateTable() {
 		return
 	}
 
-	stmt, err := db.Prepare("CREATE TABLE GO_TST.$1")
+	stmt, err := db.Prepare("CREATE TABLE fs_auto.$1")
 	if err != nil {
 		log.Fatal(err)
 	}
