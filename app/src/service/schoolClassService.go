@@ -1,92 +1,58 @@
 package service
 
 import (
-	"bytes"
-	"database/sql"
-	"encoding/json"
 	"log"
-	"net/http"
-	"strconv"
 
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/repository"
-	"github.com/gorilla/mux"
 
 )
 
 // FindAllSchoolClass ...
-func FindAllSchoolClass(w http.ResponseWriter, r *http.Request) {
-	list, err := repository.FindAllSchoolClass()
+func FindAllSchoolClass() ([]*model.SchoolClass, error) {
+	result, err := repository.FindAllSchoolClass()
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		return
+		return nil, err
 	}
 
-	for _, item := range list {
+	for _, item := range result {
 		log.Println(item.ToString())
 	}
 
-	jsonOkResponse(w, list)
+	return result, nil
 }
 
 // FindByIDSchoolClass ...
-func FindByIDSchoolClass(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	id, err := strconv.ParseInt(params["id"], 10, 64)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		return
-	}
-
+func FindByIDSchoolClass(id int64) (*model.SchoolClass, error) {
 	entity, err := repository.FindByIDSchoolClass(id)
-	switch {
-	case err == sql.ErrNoRows:
-		var errorDesc bytes.Buffer
-		errorDesc.WriteString("ERROR: No records found for id=")
-		errorDesc.WriteString(strconv.FormatInt(id, 10))
-		log.Println(errorDesc.String())
-		json.NewEncoder(w).Encode(errorDesc.String())
-		return
-	case err != nil:
-		log.Panic(err)
-		return
-	default:
+	if err != nil {
+		return nil, err
 	}
 
 	log.Println(entity.ToString())
-	jsonOkResponse(w, entity)
+	return entity, nil
 }
 
 // InsertSchoolClass ...
-func InsertSchoolClass(w http.ResponseWriter, r *http.Request) {
-	var entity model.SchoolClass
-	_ = json.NewDecoder(r.Body).Decode(&entity)
-
+func InsertSchoolClass(entity model.SchoolClass) (int64, error) {
 	id, err := repository.InsertSchoolClass(entity)
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		return
+		return 0, err
 	}
 
-	jsonCreatedResponse(w, id)
+	return id, nil
 }
 
 // UpdateSchoolClass ...
-func UpdateSchoolClass(w http.ResponseWriter, r *http.Request) {
-	var entity model.SchoolClass
-	_ = json.NewDecoder(r.Body).Decode(&entity)
-
+func UpdateSchoolClass(entity model.SchoolClass) error {
 	if err := repository.UpdateSchoolClass(entity); err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		return
+		return err
 	}
+
+	return nil
 }
 
 // DeleteSchoolClass ...
-func DeleteSchoolClass(w http.ResponseWriter, r *http.Request) {
+func DeleteSchoolClass() {
 	// TODO
 }

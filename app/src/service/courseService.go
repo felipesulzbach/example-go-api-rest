@@ -1,93 +1,56 @@
 package service
 
 import (
-	"bytes"
-	"database/sql"
-	"encoding/json"
 	"log"
-	"net/http"
-	"strconv"
 
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/repository"
-	"github.com/gorilla/mux"
 
 )
 
 // FindAllCourse ...
-func FindAllCourse(w http.ResponseWriter, r *http.Request) {
-	//	list, err := env.db.FindAllCourse()
-	list, err := repository.FindAllCourse()
+func FindAllCourse() ([]*model.Course, error) {
+	result, err := repository.FindAllCourse()
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		return
+		return nil, err
 	}
 
-	for _, item := range list {
+	for _, item := range result {
 		log.Println(item.ToString())
 	}
 
-	jsonOkResponse(w, list)
+	return result, nil
 }
 
 // FindByIDCourse ...
-func FindByIDCourse(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	//id := r.FormValue("id")
-	id, err := strconv.ParseInt(params["id"], 10, 64)
+func FindByIDCourse(id int64) (*model.Course, error) {
+	result, err := repository.FindByIDCourse(id)
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		return
+		return nil, err
 	}
 
-	entity, err := repository.FindByIDCourse(id)
-	switch {
-	case err == sql.ErrNoRows:
-		var errorDesc bytes.Buffer
-		errorDesc.WriteString("ERROR: No records found for id=")
-		errorDesc.WriteString(strconv.FormatInt(id, 10))
-		log.Println(errorDesc.String())
-		json.NewEncoder(w).Encode(errorDesc.String())
-		return
-	case err != nil:
-		log.Panic(err)
-		return
-	default:
-	}
-
-	log.Println(entity.ToString())
-	jsonOkResponse(w, entity)
+	log.Println(result.ToString())
+	return result, nil
 }
 
 // InsertCourse ...
-func InsertCourse(w http.ResponseWriter, r *http.Request) {
-	var entity model.Course
-	_ = json.NewDecoder(r.Body).Decode(&entity)
-
-	idReturned, err := repository.InsertCourse(entity)
+func InsertCourse(entity model.Course) (int64, error) {
+	id, err := repository.InsertCourse(entity)
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		return
+		return 0, err
 	}
-	jsonCreatedResponse(w, idReturned)
+	return id, nil
 }
 
 // UpdateCourse ...
-func UpdateCourse(w http.ResponseWriter, r *http.Request) {
-	var entity model.Course
-	_ = json.NewDecoder(r.Body).Decode(&entity)
-
+func UpdateCourse(entity model.Course) error {
 	if err := repository.UpdateCourse(entity); err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
-		return
+		return err
 	}
+	return nil
 }
 
 // DeleteCourse ...
-func DeleteCourse(w http.ResponseWriter, r *http.Request) {
+func DeleteCourse() {
 	// TODO
 }
