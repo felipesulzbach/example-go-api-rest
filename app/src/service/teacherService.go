@@ -2,6 +2,7 @@ package service
 
 import (
 	"log"
+	"time"
 
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/repository"
@@ -35,6 +36,7 @@ func FindByIDTeacher(id int64) (*model.Teacher, error) {
 
 // InsertTeacher ...
 func InsertTeacher(entity model.Teacher) (int64, error) {
+	entity.Person.RegistrationDate = time.Now()
 	id, err := repository.InsertTeacher(entity)
 	if err != nil {
 		return 0, err

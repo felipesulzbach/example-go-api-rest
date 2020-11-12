@@ -25,7 +25,7 @@ type file struct {
 
 // LoadDatabaseStructure ...
 func LoadDatabaseStructure() {
-	log.Println("Starting migration...")
+	log.Println("MIGRATION starting...")
 
 	db, err := repository.OpenDB()
 	if err != nil {
@@ -58,12 +58,12 @@ func LoadDatabaseStructure() {
 			log.Panic(err)
 		}
 
-		log.Printf(">>> %s.\n", item.filePath)
+		log.Printf("Migrate %s.\n", item.fileName)
 	}
 
 	db.CloseDB()
 
-	log.Println("Migration completed.")
+	log.Println("MIGRATION Completed!")
 }
 
 func getFilesPath(filePath, fileExtention string) []file {

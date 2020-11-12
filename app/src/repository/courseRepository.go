@@ -4,38 +4,36 @@ import (
 	"log"
 
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
+	"github.com/felipesulzbach/exemplo-api-rest/app/src/util"
 
 )
 
 // FindAllCourse ...
 func FindAllCourse() ([]*model.Course, error) {
-	db, err := newDB()
+	objectMap, err := getAll("SELECT * FROM fs_auto.course")
 	if err != nil {
 		log.Panic(err)
 		return nil, err
 	}
 
-	rows, err := db.Query("SELECT * FROM fs_auto.course")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	list := make([]*model.Course, 0)
-	for rows.Next() {
+	result := make([]*model.Course, 0)
+	for _, object := range objectMap {
 		item := new(model.Course)
-		err := rows.Scan(&item.ID, &item.Name, &item.Description, &item.RegistrationDate)
+
+		objectJSON, err := util.Serializer(object)
 		if err != nil {
 			return nil, err
 		}
-		list = append(list, item)
-	}
-	if err = rows.Err(); err != nil {
-		return nil, err
+
+		err = util.Unserializer(objectJSON, &item)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, item)
 	}
 
-	db.closeDB()
-	return list, nil
+	return result, nil
 }
 
 // FindByIDCourse ...
@@ -48,43 +46,67 @@ func FindByIDCourse(id int64) (*model.Course, error) {
 
 	row := db.QueryRow("SELECT * FROM fs_auto.course WHERE id=$1", id)
 
-	item := new(model.Course)
-	if err := row.Scan(&item.ID, &item.Name, &item.Description, &item.RegistrationDate); err != nil {
+	result := new(model.Course)
+	if err := row.Scan(&result.ID, &result.Name, &result.Description, &result.RegistrationDate); err != nil {
 		return nil, err
 	}
 
 	db.closeDB()
-	return item, nil
+	return result, nil
 }
 
 // InsertCourse ...
-func InsertCourse(entity model.Course) (int64, error) {
+func InsertCourse(entity model.Course) (*model.Course, error) {
 	db, err := newDB()
 	if err != nil {
 		log.Panic(err)
-		return 0, err
+		return nil, err
 	}
 
-	sqlStatement := "INSERT INTO fs_auto.course (name, description, registration_date) VALUES ($1, $2, $3) RETURNING id"
-	var id int64
-	if err := db.QueryRow(sqlStatement, entity.Name, entity.Description, entity.RegistrationDate).Scan(&id); err != nil {
-		return 0, err
+	sqlStatement := "INSERT INTO fs_auto.course (name, description, registration_date) VALUES ($1, $2, $3) RETURNING *"
+	result := new(model.Course)
+	if err := db.QueryRow(sqlStatement, entity.Name, entity.Description, entity.RegistrationDate).Scan(&result.ID, &result.Name, &result.Description, &result.RegistrationDate); err != nil {
+		return nil, err
 	}
 
 	db.closeDB()
-	return id, nil
+	return result, nil
 }
 
 // UpdateCourse ...
-func UpdateCourse(entity model.Course) error {
+func UpdateCourse(entity model.Course) (*model.Course, error) {
+	db, err := newDB()
+	if err != nil {
+		log.Panic(err)
+		return nil, err
+	}
+
+	sqlStatement := "UPDATE fs_auto.course SET name=$2, description=$3 WHERE id=$1"
+	if _, err := db.Exec(sqlStatement, entity.ID, entity.Name, entity.Description); err != nil {
+		return nil, err
+	}
+
+	row := db.QueryRow("SELECT * FROM fs_auto.course WHERE id=$1", entity.ID)
+
+	result := new(model.Course)
+	if err := row.Scan(&result.ID, &result.Name, &result.Description, &result.RegistrationDate); err != nil {
+		return nil, err
+	}
+
+	db.closeDB()
+	return result, nil
+}
+
+// DeleteCourse ...
+func DeleteCourse(id int64) error {
 	db, err := newDB()
 	if err != nil {
 		log.Panic(err)
 		return err
 	}
 
-	sqlStatement := "UPDATE fs_auto.course SET name=$1, description=$2, registration_date=$3 WHERE id=$1"
-	if _, err := db.Exec(sqlStatement, entity.ID, entity.Name, entity.Description, entity.RegistrationDate); err != nil {
+	sqlStatement := "DELETE fs_auto.course WHERE id=$1"
+	if _, err := db.Exec(sqlStatement, id); err != nil {
 		return err
 	}
 

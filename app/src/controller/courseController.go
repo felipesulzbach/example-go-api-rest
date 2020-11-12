@@ -53,27 +53,40 @@ func createCourse(w http.ResponseWriter, r *http.Request) {
 	var entity model.Course
 	_ = json.NewDecoder(r.Body).Decode(&entity)
 
-	id, err := service.InsertCourse(entity)
+	response, err := service.InsertCourse(entity)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		return
 	}
 
-	jsonCreatedResponse(w, id)
+	jsonCreatedResponse(w, response)
 }
 
 func updateCourse(w http.ResponseWriter, r *http.Request) {
 	var entity model.Course
 	_ = json.NewDecoder(r.Body).Decode(&entity)
 
-	if err := service.UpdateCourse(entity); err != nil {
+	response, err := service.UpdateCourse(entity)
+	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		return
 	}
+
+	jsonOkResponse(w, response)
 }
 
 func deleteCourse(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	params := mux.Vars(r)
+	//id := r.FormValue("id")
+	id, _ := strconv.ParseInt(params["id"], 10, 64)
+
+	if err := service.DeleteCourse(id); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		log.Panic(err)
+		return
+	}
+
+	jsonOkResponse(w, "")
 }
