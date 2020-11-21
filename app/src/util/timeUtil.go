@@ -2,6 +2,7 @@ package util
 
 import (
 	"log"
+	"strings"
 	"time"
 
 )
@@ -21,9 +22,17 @@ func FormatDateTimeISO8601(dateTime time.Time) string {
 
 // StringToTime - Converts date from String to Time.
 func StringToTime(date string) time.Time {
+	if strings.Contains(date, "m=+") {
+		date = date[0:19]
+	}
 	datetime, err := time.Parse(time.RFC3339, date)
 	if err != nil {
 		log.Panic(err)
 	}
 	return datetime
+}
+
+// TimeIsEmpty ...
+func TimeIsEmpty(dateTime time.Time) bool {
+	return dateTime.IsZero()
 }

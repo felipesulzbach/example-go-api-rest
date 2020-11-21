@@ -9,14 +9,14 @@ import (
 
 // AppUser Entity.
 type AppUser struct {
-	ID               int64     `json:"id,omitempty"`
-	Name             string    `json:"name,omitempty"`
-	Password         string    `json:"password,omitempty"`
-	Profile          Profile   `json:"profile,omitempty"`
-	Person           Person    `json:"person,omitempty"`
-	StartDate        time.Time `json:"start_date,omitempty"`
-	EndDate          time.Time `json:"end_date,omitempty"`
-	RegistrationDate time.Time `json:"registration_date,omitempty"`
+	ID               int64     `db:"id" json:"id,omitempty"`
+	Name             string    `db:"name" json:"name,omitempty"`
+	Password         string    `db:"password" json:"password,omitempty"`
+	Profile          Profile   `db:"profile" json:"profile,omitempty"`
+	Person           Person    `db:"person" json:"person,omitempty"`
+	StartDate        time.Time `db:"start_date" json:"start_date,omitempty"`
+	EndDate          time.Time `db:"end_date" json:"end_date,omitempty"`
+	RegistrationDate time.Time `db:"registration_date" json:"registration_date,omitempty"`
 }
 
 // ToString ...

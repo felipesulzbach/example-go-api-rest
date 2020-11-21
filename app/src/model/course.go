@@ -9,10 +9,10 @@ import (
 
 // Course ...
 type Course struct {
-	ID               int     `json:"id,omitempty"`
-	Name             string    `json:"name,omitempty"`
-	Description      string    `json:"description,omitempty"`
-	RegistrationDate time.Time `json:"registration_date,omitempty"`
+	ID               int       `db:"id" json:"id,omitempty"`
+	Name             string    `db:"name" json:"name,omitempty"`
+	Description      string    `db:"description" json:"description,omitempty"`
+	RegistrationDate time.Time `db:"registration_date" json:"registration_date,omitempty"`
 }
 
 // ToString ...

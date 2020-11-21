@@ -4,8 +4,8 @@ import "github.com/felipesulzbach/exemplo-api-rest/app/src/util"
 
 // Teacher Entity.
 type Teacher struct {
-	Person Person `json:"person,omitempty"`
-	Course Course `json:"course,omitempty"`
+	Person Person `db:"person" json:"person,omitempty"`
+	Course Course `db:"course" json:"course,omitempty"`
 }
 
 // ToString ...

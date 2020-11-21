@@ -9,14 +9,14 @@ import (
 
 // Person Entity.
 type Person struct {
-	ID               int64     `json:"id,omitempty"`
-	Name             string    `json:"name,omitempty"`
-	Cpf              string    `json:"cpf,omitempty"`
-	CellPhone        string    `json:"cell_phone,omitempty"`
-	City             string    `json:"city,omitempty"`
-	ZipCode          string    `json:"zip_code,omitempty"`
-	Address          string    `json:"address,omitempty"`
-	RegistrationDate time.Time `json:"registration_date,omitempty"`
+	ID               int64     `db:"id" json:"id,omitempty"`
+	Name             string    `db:"name" json:"name,omitempty"`
+	Cpf              string    `db:"cpf" json:"cpf,omitempty"`
+	CellPhone        string    `db:"cell_phone" json:"cell_phone,omitempty"`
+	City             string    `db:"city" json:"city,omitempty"`
+	ZipCode          string    `db:"zip_code" json:"zip_code,omitempty"`
+	Address          string    `db:"address" json:"address,omitempty"`
+	RegistrationDate time.Time `db:"registration_date" json:"registration_date,omitempty"`
 }
 
 // ToString ...

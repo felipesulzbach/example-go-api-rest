@@ -10,7 +10,7 @@ import (
 
 // FindAllCourse ...
 func FindAllCourse() ([]*model.Course, error) {
-	objectMap, err := getAll("SELECT * FROM fs_auto.course")
+	objectMap, err := getAll("course")
 	if err != nil {
 		log.Panic(err)
 		return nil, err
@@ -38,26 +38,50 @@ func FindAllCourse() ([]*model.Course, error) {
 
 // FindByIDCourse ...
 func FindByIDCourse(id int64) (*model.Course, error) {
-	db, err := newDB()
+	object, err := getByID("course", id)
 	if err != nil {
 		log.Panic(err)
 		return nil, err
 	}
 
-	row := db.QueryRow("SELECT * FROM fs_auto.course WHERE id=$1", id)
-
-	result := new(model.Course)
-	if err := row.Scan(&result.ID, &result.Name, &result.Description, &result.RegistrationDate); err != nil {
+	
+	objectJSON, err := util.Serializer(object)
+	if err != nil {
+		return nil, err
+	}
+	
+	item := new(model.Course)
+	err = util.Unserializer(objectJSON, &item)
+	if err != nil {
 		return nil, err
 	}
 
-	db.closeDB()
-	return result, nil
+	return item, nil
 }
 
 // InsertCourse ...
 func InsertCourse(entity model.Course) (*model.Course, error) {
-	db, err := newDB()
+	item := new(model.Course)
+	object, err := create(item, entity)
+	if err != nil {
+		log.Panic(err)
+		return nil, err
+	}
+
+	objectJSON, err := util.Serializer(object)
+	if err != nil {
+		return nil, err
+	}
+
+	err = util.Unserializer(objectJSON, &item)
+	if err != nil {
+		return nil, err
+	}
+
+	return &entity, nil
+
+
+	/*db, err := newDB()
 	if err != nil {
 		log.Panic(err)
 		return nil, err
@@ -70,7 +94,7 @@ func InsertCourse(entity model.Course) (*model.Course, error) {
 	}
 
 	db.closeDB()
-	return result, nil
+	return result, nil*/
 }
 
 // UpdateCourse ...
@@ -99,17 +123,11 @@ func UpdateCourse(entity model.Course) (*model.Course, error) {
 
 // DeleteCourse ...
 func DeleteCourse(id int64) error {
-	db, err := newDB()
+	err := delete("course", id)
 	if err != nil {
 		log.Panic(err)
 		return err
 	}
 
-	sqlStatement := "DELETE fs_auto.course WHERE id=$1"
-	if _, err := db.Exec(sqlStatement, id); err != nil {
-		return err
-	}
-
-	db.closeDB()
 	return nil
 }

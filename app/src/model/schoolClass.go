@@ -9,11 +9,11 @@ import (
 
 // SchoolClass ...
 type SchoolClass struct {
-	ID               int64     `json:"id,omitempty"`
-	Course           Course    `json:"course,omitempty"`
-	StartDate        time.Time `json:"start_date,omitempty"`
-	EndDate          time.Time `json:"end_date,omitempty"`
-	RegistrationDate time.Time `json:"registration_date,omitempty"`
+	ID               int64     `db:"id" json:"id,omitempty"`
+	Course           Course    `db:"course" json:"course,omitempty"`
+	StartDate        time.Time `db:"start_date" json:"start_date,omitempty"`
+	EndDate          time.Time `db:"end_date" json:"end_date,omitempty"`
+	RegistrationDate time.Time `db:"registration_date" json:"registration_date,omitempty"`
 }
 
 // ToString ...

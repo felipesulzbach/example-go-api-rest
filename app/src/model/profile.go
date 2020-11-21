@@ -4,10 +4,10 @@ import "github.com/felipesulzbach/exemplo-api-rest/app/src/util"
 
 // Profile Entity.
 type Profile struct {
-	ID               int64  `json:"id,omitempty"`
-	Name             string `json:"name,omitempty"`
-	Code             string `json:"code,omitempty"`
-	AccessPermission string `json:"access_permission,omitempty"`
+	ID               int64  `db:"id" json:"id,omitempty"`
+	Name             string `db:"name" json:"name,omitempty"`
+	Code             string `db:"code" json:"code,omitempty"`
+	AccessPermission string `db:"access_permission" json:"access_permission,omitempty"`
 }
 
 // ToString ...
