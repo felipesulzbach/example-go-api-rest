@@ -22,9 +22,10 @@ func FormatDateTimeISO8601(dateTime time.Time) string {
 
 // StringToTime - Converts date from String to Time.
 func StringToTime(date string) time.Time {
-	if strings.Contains(date, "m=+") {
-		date = date[0:19]
+	if strings.Contains(date, " m=") {
+		return removeMonotonicClock(date)
 	}
+
 	datetime, err := time.Parse(time.RFC3339, date)
 	if err != nil {
 		log.Panic(err)
@@ -35,4 +36,13 @@ func StringToTime(date string) time.Time {
 // TimeIsEmpty ...
 func TimeIsEmpty(dateTime time.Time) bool {
 	return dateTime.IsZero()
+}
+
+func removeMonotonicClock(date string) time.Time {
+	datetime, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", strings.Split(date, " m=")[0])
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return datetime
 }

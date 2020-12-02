@@ -2,6 +2,8 @@ package repository
 
 import (
 	"log"
+	"strconv"
+	"strings"
 
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/util"
@@ -44,12 +46,11 @@ func FindByIDCourse(id int64) (*model.Course, error) {
 		return nil, err
 	}
 
-	
 	objectJSON, err := util.Serializer(object)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	item := new(model.Course)
 	err = util.Unserializer(objectJSON, &item)
 	if err != nil {
@@ -62,7 +63,14 @@ func FindByIDCourse(id int64) (*model.Course, error) {
 // InsertCourse ...
 func InsertCourse(entity model.Course) (*model.Course, error) {
 	item := new(model.Course)
-	object, err := create(item, entity)
+	id, err := create(item, entity)
+	if err != nil {
+		log.Panic(err)
+		return nil, err
+	}
+
+	entity.ID = id
+	object, err := FindByIDCourse(id)
 	if err != nil {
 		log.Panic(err)
 		return nil, err
@@ -79,45 +87,30 @@ func InsertCourse(entity model.Course) (*model.Course, error) {
 	}
 
 	return &entity, nil
-
-
-	/*db, err := newDB()
-	if err != nil {
-		log.Panic(err)
-		return nil, err
-	}
-
-	sqlStatement := "INSERT INTO fs_auto.course (name, description, registration_date) VALUES ($1, $2, $3) RETURNING *"
-	result := new(model.Course)
-	if err := db.QueryRow(sqlStatement, entity.Name, entity.Description, entity.RegistrationDate).Scan(&result.ID, &result.Name, &result.Description, &result.RegistrationDate); err != nil {
-		return nil, err
-	}
-
-	db.closeDB()
-	return result, nil*/
 }
 
 // UpdateCourse ...
 func UpdateCourse(entity model.Course) (*model.Course, error) {
-	db, err := newDB()
-	if err != nil {
+	var query strings.Builder
+	query.WriteString("UPDATE fs_auto.course SET ")
+	query.WriteString("name='")
+	query.WriteString(entity.Name)
+	query.WriteString("',")
+	query.WriteString("description='")
+	query.WriteString(entity.Description)
+	query.WriteString("' WHERE id=")
+	query.WriteString(strconv.FormatInt(entity.ID, 10))
+
+	if err := update(query.String()); err != nil {
 		log.Panic(err)
 		return nil, err
 	}
 
-	sqlStatement := "UPDATE fs_auto.course SET name=$2, description=$3 WHERE id=$1"
-	if _, err := db.Exec(sqlStatement, entity.ID, entity.Name, entity.Description); err != nil {
+	result, err := FindByIDCourse(entity.ID)
+	if err != nil {
 		return nil, err
 	}
 
-	row := db.QueryRow("SELECT * FROM fs_auto.course WHERE id=$1", entity.ID)
-
-	result := new(model.Course)
-	if err := row.Scan(&result.ID, &result.Name, &result.Description, &result.RegistrationDate); err != nil {
-		return nil, err
-	}
-
-	db.closeDB()
 	return result, nil
 }
 

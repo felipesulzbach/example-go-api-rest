@@ -9,7 +9,7 @@ import (
 
 // Course ...
 type Course struct {
-	ID               int       `db:"id" json:"id,omitempty"`
+	ID               int64     `db:"id" json:"id,omitempty"`
 	Name             string    `db:"name" json:"name,omitempty"`
 	Description      string    `db:"description" json:"description,omitempty"`
 	RegistrationDate time.Time `db:"registration_date" json:"registration_date,omitempty"`
