@@ -1,0 +1,1001 @@
+{
+	"info": {
+		"_postman_id": "d366b2cf-e488-4e20-8d4d-7f1fcb1b34e3",
+		"name": "goLang",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "example-go-rest-api",
+			"item": [
+				{
+					"name": "appUser",
+					"item": [
+						{
+							"name": "appUser.getAll",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/user",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "appUser.getById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/user/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "appUser.create",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "e9cdf284-ba16-4711-aaaf-beece95c34f8",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"Teste 1\",\n\t\"password\": \"123456\",\n\t\"personId\": null,\n\t\"profileId\": 1,\n\t\"expirationDate\": \"2020-04-30 02:58:59\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/user",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "appUser.update",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "befca3f1-479a-4631-ab73-b2985b7a5a0a",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"name\": \"Teste 1 Updated\",\r\n\t\"password\": \"789012\",\r\n\t\"personId\": null,\r\n\t\"profileId\": 1,\r\n\t\"expirationDate\": \"2020-12-30 02:58:59\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/user/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "appUser.remove",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/user/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"3"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "course",
+					"item": [
+						{
+							"name": "course.getAll",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/course",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"course"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "course.getById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/course/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"course",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "course.create",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "b5d02ce4-6025-4f02-bef1-d47c3e429020",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"Name Teste 1\",\n\t\"description\": \"Description Teste 1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/course",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"course"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "course.update",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "f0f73c79-f0d5-4242-a4fb-c7c0cf837107",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": 1,\n\t\"name\": \"Name Teste 1 Updated\",\n\t\"description\": \"Description Teste 1 Updated\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/course",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"course"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "course.remove",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/course/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"course",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "profile",
+					"item": [
+						{
+							"name": "profile.getAll",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/profile",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "profile.getById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/profile/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"profile",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "profile.create",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "b6d5848d-df58-40ec-896a-13a8595d8ff4",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"Name Teste 1\",\n\t\"code\": \"TST01\",\n\t\"accessPermission\": \"NO_ACCESS\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/profile",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "profile.update",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "9f3514b0-3ba4-415f-a2d0-5a17d2a63c5d",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"Name Teste 1 Updated\",\n\t\"code\": \"TST01\",\n\t\"accessPermission\": \"READING\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/profile/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"profile",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "profile.remove",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/profile/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"profile",
+										"4"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "schoolclass",
+					"item": [
+						{
+							"name": "schoolclass.getAll",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/schoolclass",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"schoolclass"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "schoolclass.getById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/schoolclass/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"schoolclass",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "schoolclass.create",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "b9200c06-6748-4342-afb2-afdc7304cc9f",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"courseId\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/schoolclass",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"schoolclass"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "schoolclass.update",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "5bd7cd64-ad1d-4ec4-87cb-99eadc1d371a",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"courseId\": 2\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/schoolclass/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"schoolclass",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "schoolclass.remove",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/schoolclass/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"schoolclass",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "student",
+					"item": [
+						{
+							"name": "student.getAll",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/student",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"student"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "student.getById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/student/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"student",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "student.create",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7cde9341-cf7c-4790-a07c-a0a0aa3f4c40",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"schoolClassId\": 1,\n\t\"name\": \"Name Teste 1\",\n\t\"cpf\": \"12345678901\",\n\t\"cellPhone\": \"88999999999\",\n\t\"city\": \"City Teste 1\",\n\t\"zipCode\": \"999999\",\n\t\"address\": \"Address Teste 1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/student",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"student"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "student.update",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "6847d4fe-00f3-480e-ac88-b5333bebc6b9",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"schoolClassId\": 1,\n\t\"name\": \"Name Teste 1 Updtated\",\n\t\"cpf\": \"12345678901\",\n\t\"cellPhone\": \"88999999999\",\n\t\"city\": \"City Teste 1 Updtated\",\n\t\"zipCode\": \"999999\",\n\t\"address\": \"Address Teste 1 Updtated\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/student/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"student",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "student.remove",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/student/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"student",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "teacher",
+					"item": [
+						{
+							"name": "teacher.getAll",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/teacher",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"teacher"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "teacher.getById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/teacher/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"teacher",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "teacher.create",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "37d020dc-de38-41e3-aa2a-3e4670679d76",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"courseId\": 1,\n\t\"name\": \"Name Teste 1\",\n\t\"cpf\": \"12345678901\",\n\t\"cellPhone\": \"88999999999\",\n\t\"city\": \"City Teste 1\",\n\t\"zipCode\": \"999999\",\n\t\"address\": \"Address Teste 1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/teacher",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"teacher"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "teacher.update",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "38a17ee8-a9cc-4068-90be-1fc8d8d8ed9c",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"courseId\": 1,\n\t\"name\": \"Name Teste 1 Updtated\",\n\t\"cpf\": \"12345678901\",\n\t\"cellPhone\": \"88999999999\",\n\t\"city\": \"City Teste 1 Updtated\",\n\t\"zipCode\": \"999999\",\n\t\"address\": \"Address Teste 1 Updtated\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/teacher/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"teacher",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "teacher.remove",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/teacher/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"teacher",
+										"3"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "b4922e5c-cbd0-4aef-a02f-002eeabb8eb8",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "0ad9219d-69a9-40b4-a08c-c0ccc7e3023c",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "cb73cbae-0193-4e30-a9d3-25e46099e813",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "4df77f22-60ac-451e-8208-3fbc97a927d8",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
