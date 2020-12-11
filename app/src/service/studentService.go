@@ -2,7 +2,6 @@ package service
 
 import (
 	"log"
-	"time"
 
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/repository"
@@ -35,26 +34,32 @@ func FindByIDStudent(id int64) (*model.Student, error) {
 }
 
 // InsertStudent ...
-func InsertStudent(entity model.Student) (int64, error) {
-	entity.Person.RegistrationDate = time.Now()
-	id, err := repository.InsertStudent(entity)
+func InsertStudent(entity model.Student) (*model.Student, error) {
+	result, err := repository.InsertStudent(entity)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	return id, nil
+	log.Println(result.ToString())
+	return result, nil
 }
 
 // UpdateStudent ...
-func UpdateStudent(entity model.Student) error {
-	if err := repository.UpdateStudent(entity); err != nil {
+func UpdateStudent(entity model.Student) (*model.Student, error) {
+	result, err := repository.UpdateStudent(entity)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println(result.ToString())
+	return result, nil
+}
+
+// DeleteStudent ...
+func DeleteStudent(id int64) error {
+	if err := repository.DeleteStudent(id); err != nil {
 		return err
 	}
 
 	return nil
-}
-
-// DeleteStudent ...
-func DeleteStudent() {
-	// TODO
 }

@@ -1,5 +1,6 @@
 package enum
 
+/*
 type Weekday int
 
 const (
@@ -37,24 +38,6 @@ func (code int) WeekdayText() string {
   return names[code]
 }
 
-/*
-var namesCode := [int]string{
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday"}
-
-func WeekdayText(code int) string {
-  if code < Sunday || code > Saturday {
-    return "Unknown"
-  }
-  return namesCode[code]
-}
-*/
-
 // IsWeekend - Checks if the day is a weekend.
 // fmt.Printf("Is Saturday a weekend day? %t\n", Saturday.IsWeekend()) // Is Saturday a weekend day? true
 func (day Weekday) IsWeekend() bool {
@@ -65,3 +48,4 @@ func (day Weekday) IsWeekend() bool {
     return false
   }
 }
+*/

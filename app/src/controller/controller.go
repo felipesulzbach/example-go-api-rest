@@ -23,7 +23,6 @@ func CreateRouters(routerWS *mux.Router) {
 
 	createRoutersCourse(routerWS)
 	createRoutersSchoolClass(routerWS)
-	createRoutersPerson(routerWS)
 	createRoutersStudent(routerWS)
 	createRoutersTeacher(routerWS)
 	http.Handle("/", routerWS)

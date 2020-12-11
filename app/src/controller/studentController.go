@@ -8,9 +8,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
+	"github.com/felipesulzbach/exemplo-api-rest/app/src/controller/contract"
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/service"
-	"github.com/gorilla/mux"
 
 )
 
@@ -26,11 +25,10 @@ func getAllStudent(w http.ResponseWriter, r *http.Request) {
 }
 
 func getByIDStudent(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	id, err := strconv.ParseInt(params["id"], 10, 64)
+	var contract contract.StudentContract
+	id, err := contract.ValidatePath(r)
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -44,39 +42,63 @@ func getByIDStudent(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(errorDesc.String())
 		return
 	case err != nil:
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		return
 	default:
 	}
-
 	jsonOkResponse(w, response)
 }
 
-func insertStudent(w http.ResponseWriter, r *http.Request) {
-	var entity model.Student
-	_ = json.NewDecoder(r.Body).Decode(&entity)
+func createStudent(w http.ResponseWriter, r *http.Request) {
+	var contract contract.StudentContract
+	entity, err := contract.ValidateBodyCreate(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	id, err := service.InsertStudent(entity)
+	response, err := service.InsertStudent(entity)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		return
 	}
 
-	jsonCreatedResponse(w, id)
+	jsonCreatedResponse(w, response)
 }
 
 func updateStudent(w http.ResponseWriter, r *http.Request) {
-	var entity model.Student
-	_ = json.NewDecoder(r.Body).Decode(&entity)
+	var contract contract.StudentContract
+	entity, err := contract.ValidateBodyUpdate(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	if err := service.UpdateStudent(entity); err != nil {
+	response, err := service.UpdateStudent(entity)
+	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		return
 	}
+
+	jsonOkResponse(w, response)
 }
 
 func deleteStudent(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	var contract contract.StudentContract
+	id, err := contract.ValidatePath(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := service.DeleteStudent(id); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		log.Panic(err)
+		return
+	}
+
+	jsonOkResponse(w, "")
 }

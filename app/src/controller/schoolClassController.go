@@ -8,9 +8,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
+	"github.com/felipesulzbach/exemplo-api-rest/app/src/controller/contract"
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/service"
-	"github.com/gorilla/mux"
 
 )
 
@@ -26,11 +25,10 @@ func getAllSchoolClass(w http.ResponseWriter, r *http.Request) {
 }
 
 func getByIDSchoolClass(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	id, err := strconv.ParseInt(params["id"], 10, 64)
+	var contract contract.SchoolClassContract
+	id, err := contract.ValidatePath(r)
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		log.Panic(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -44,39 +42,63 @@ func getByIDSchoolClass(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(errorDesc.String())
 		return
 	case err != nil:
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		return
 	default:
 	}
-
 	jsonOkResponse(w, response)
 }
 
-func insertSchoolClass(w http.ResponseWriter, r *http.Request) {
-	var entity model.SchoolClass
-	_ = json.NewDecoder(r.Body).Decode(&entity)
+func createSchoolClass(w http.ResponseWriter, r *http.Request) {
+	var contract contract.SchoolClassContract
+	entity, err := contract.ValidateBodyCreate(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	id, err := service.InsertSchoolClass(entity)
+	response, err := service.InsertSchoolClass(entity)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		return
 	}
 
-	jsonCreatedResponse(w, id)
+	jsonCreatedResponse(w, response)
 }
 
 func updateSchoolClass(w http.ResponseWriter, r *http.Request) {
-	var entity model.SchoolClass
-	_ = json.NewDecoder(r.Body).Decode(&entity)
+	var contract contract.SchoolClassContract
+	entity, err := contract.ValidateBodyUpdate(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	if err := service.UpdateSchoolClass(entity); err != nil {
+	response, err := service.UpdateSchoolClass(entity)
+	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		log.Panic(err)
 		return
 	}
+
+	jsonOkResponse(w, response)
 }
 
 func deleteSchoolClass(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	var contract contract.SchoolClassContract
+	id, err := contract.ValidatePath(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := service.DeleteSchoolClass(id); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		log.Panic(err)
+		return
+	}
+
+	jsonOkResponse(w, "")
 }

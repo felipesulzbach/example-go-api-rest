@@ -28,13 +28,19 @@ func StringToTime(date string) time.Time {
 
 	datetime, err := time.Parse(time.RFC3339, date)
 	if err != nil {
-		log.Panic(err)
+		datetime, err = time.Parse(time.UnixDate, date)
+		if err != nil {
+			datetime, err = time.Parse("2006-01-02 15:04:05 -0700 MST", date)
+			if err != nil {
+				log.Panic(err)
+			}
+		}
 	}
 	return datetime
 }
 
-// TimeIsEmpty ...
-func TimeIsEmpty(dateTime time.Time) bool {
+// IsDateTimeEmpty ...
+func IsDateTimeEmpty(dateTime time.Time) bool {
 	return dateTime.IsZero()
 }
 
@@ -45,4 +51,9 @@ func removeMonotonicClock(date string) time.Time {
 	}
 
 	return datetime
+}
+
+// IsDateTimeBefore ...
+func IsDateTimeBefore(start time.Time, end time.Time) bool {
+	return start.Before(end)
 }

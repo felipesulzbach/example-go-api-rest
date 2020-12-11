@@ -2,7 +2,6 @@ package service
 
 import (
 	"log"
-	"time"
 
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/repository"
@@ -25,36 +24,42 @@ func FindAllSchoolClass() ([]*model.SchoolClass, error) {
 
 // FindByIDSchoolClass ...
 func FindByIDSchoolClass(id int64) (*model.SchoolClass, error) {
-	entity, err := repository.FindByIDSchoolClass(id)
+	result, err := repository.FindByIDSchoolClass(id)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println(entity.ToString())
-	return entity, nil
+	log.Println(result.ToString())
+	return result, nil
 }
 
 // InsertSchoolClass ...
-func InsertSchoolClass(entity model.SchoolClass) (int64, error) {
-	entity.RegistrationDate = time.Now()
-	id, err := repository.InsertSchoolClass(entity)
+func InsertSchoolClass(entity model.SchoolClass) (*model.SchoolClass, error) {
+	result, err := repository.InsertSchoolClass(entity)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	return id, nil
+	log.Println(result.ToString())
+	return result, nil
 }
 
 // UpdateSchoolClass ...
-func UpdateSchoolClass(entity model.SchoolClass) error {
-	if err := repository.UpdateSchoolClass(entity); err != nil {
+func UpdateSchoolClass(entity model.SchoolClass) (*model.SchoolClass, error) {
+	result, err := repository.UpdateSchoolClass(entity)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println(result.ToString())
+	return result, nil
+}
+
+// DeleteSchoolClass ...
+func DeleteSchoolClass(id int64) error {
+	if err := repository.DeleteSchoolClass(id); err != nil {
 		return err
 	}
 
 	return nil
-}
-
-// DeleteSchoolClass ...
-func DeleteSchoolClass() {
-	// TODO
 }

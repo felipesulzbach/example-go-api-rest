@@ -2,8 +2,7 @@ package repository
 
 import (
 	"log"
-	"strconv"
-	"strings"
+	"time"
 
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/util"
@@ -62,6 +61,8 @@ func FindByIDCourse(id int64) (*model.Course, error) {
 
 // InsertCourse ...
 func InsertCourse(entity model.Course) (*model.Course, error) {
+	entity.RegistrationDate = time.Now()
+
 	item := new(model.Course)
 	id, err := create(item, entity)
 	if err != nil {
@@ -91,17 +92,16 @@ func InsertCourse(entity model.Course) (*model.Course, error) {
 
 // UpdateCourse ...
 func UpdateCourse(entity model.Course) (*model.Course, error) {
-	var query strings.Builder
-	query.WriteString("UPDATE fs_auto.course SET ")
-	query.WriteString("name='")
-	query.WriteString(entity.Name)
-	query.WriteString("',")
-	query.WriteString("description='")
-	query.WriteString(entity.Description)
-	query.WriteString("' WHERE id=")
-	query.WriteString(strconv.FormatInt(entity.ID, 10))
+	entityUpdate, err := FindByIDCourse(entity.ID)
+	if err != nil {
+		log.Panic(err)
+		return nil, err
+	}
 
-	if err := update(query.String()); err != nil {
+	entityUpdate.Name = entity.Name
+	entityUpdate.Description = entity.Description
+
+	if err := update(entityUpdate); err != nil {
 		log.Panic(err)
 		return nil, err
 	}

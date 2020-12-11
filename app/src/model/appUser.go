@@ -20,12 +20,9 @@ type AppUser struct {
 }
 
 // ToString ...
-func (entity *AppUser) ToString() (string, error) {
-	result, err := getJSONSerilizer(entity)
-	if err != nil {
-		return "", err
-	}
-	return result, nil
+func (entity *AppUser) ToString() string {
+	result, _ := getJSONSerilizer(entity)
+	return result
 }
 
 // GetTableName ...

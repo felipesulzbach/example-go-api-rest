@@ -96,37 +96,16 @@ func create(entity interface{}, value interface{}) (int64, error) {
 	}
 
 	val := reflect.ValueOf(entity).Elem()
+	columns, values := _getQueryFields(val, value)
 
 	var query strings.Builder
 	query.WriteString("INSERT INTO fs_auto.")
 	query.WriteString(val.Type().Name())
 	query.WriteString("(")
-	totalFields := val.Type().NumField()
-	for i := 0; i < totalFields; i++ {
-		if val.Type().Field(i).Tag.Get("db") == "id" && getFieldValue(value, val.Type().Field(i)) == "0" {
-			continue
-		}
-
-		query.WriteString(val.Type().Field(i).Tag.Get("db"))
-		if i < totalFields-1 {
-			query.WriteString(",")
-		}
-	}
-	query.WriteString(")")
-	query.WriteString(" VALUES (")
-	for i := 0; i < totalFields; i++ {
-		if val.Type().Field(i).Tag.Get("db") == "id" && getFieldValue(value, val.Type().Field(i)) == "0" {
-			continue
-		}
-
-		query.WriteString(getFieldValue(value, val.Type().Field(i)))
-		if i < totalFields-1 {
-			query.WriteString(",")
-		}
-	}
+	query.WriteString(columns.String())
+	query.WriteString(") VALUES (")
+	query.WriteString(values.String())
 	query.WriteString(") RETURNING id")
-
-	log.Println(query.String())
 
 	var id int64
 	if err := db.QueryRow(query.String()).Scan(&id); err != nil {
@@ -137,45 +116,9 @@ func create(entity interface{}, value interface{}) (int64, error) {
 	return id, nil
 }
 
-func getFieldValue(entity interface{}, structField reflect.StructField) string {
-	field := getField(entity, structField.Name)
+func update(entity interface{}) error {
+	query := _getQueryUpdate(entity)
 
-	value := ""
-	switch structField.Type {
-	case reflect.TypeOf((time.Time)(time.Now())):
-		vall := fmt.Sprintf("%v", field)
-		dateTime := util.StringToTime(vall)
-		if util.TimeIsEmpty(dateTime) {
-			value = "null"
-		} else {
-			value = "'" + util.FormatDateTimeISO8601(dateTime) + "'"
-		}
-		break
-	case reflect.TypeOf((string)("")):
-		value = fmt.Sprintf("%v", field)
-		if value == "" {
-			value = "null"
-		} else {
-			value = "'" + value + "'"
-		}
-	default:
-		value = fmt.Sprintf("%v", field)
-		if value == "" {
-			value = "null"
-		}
-	}
-
-	return value
-}
-
-func getField(entity interface{}, fieldName string) interface{} {
-	reflectValue := reflect.ValueOf(entity)
-	value := reflect.Indirect(reflectValue).FieldByName(fieldName)
-
-	return value
-}
-
-func update(query string) error {
 	db, err := newDB()
 	if err != nil {
 		log.Panic(err)
@@ -204,4 +147,92 @@ func delete(tableName string, id int64) error {
 
 	db.closeDB()
 	return nil
+}
+
+func _getQueryFields(val reflect.Value, value interface{}) (strings.Builder, strings.Builder) {
+	var columns strings.Builder
+	var values strings.Builder
+
+	totalFields := val.Type().NumField()
+	for i := 0; i < totalFields; i++ {
+		if val.Type().Field(i).Tag.Get("db") == "id" && _getFieldValue(value, val.Type().Field(i)) == "0" {
+			continue
+		}
+
+		columns.WriteString(val.Type().Field(i).Tag.Get("db"))
+		values.WriteString(_getFieldValue(value, val.Type().Field(i)))
+		if i < totalFields-1 {
+			columns.WriteString(",")
+			values.WriteString(",")
+		}
+	}
+
+	return columns, values
+}
+
+func _getFieldValue(entity interface{}, structField reflect.StructField) string {
+	field := _getField(entity, structField.Name)
+
+	value := ""
+	switch structField.Type {
+	case reflect.TypeOf((time.Time)(time.Now())):
+		vall := fmt.Sprintf("%v", field)
+		dateTime := util.StringToTime(vall)
+		if util.IsDateTimeEmpty(dateTime) {
+			value = "null"
+		} else {
+			value = "'" + util.FormatDateTimeISO8601(dateTime) + "'"
+		}
+		break
+	case reflect.TypeOf((string)("")):
+		value = fmt.Sprintf("%v", field)
+		if value == "" {
+			value = "null"
+		} else {
+			value = "'" + value + "'"
+		}
+	default:
+		value = fmt.Sprintf("%v", field)
+		if value == "" {
+			value = "null"
+		}
+	}
+
+	return value
+}
+
+func _getField(entity interface{}, fieldName string) interface{} {
+	reflectValue := reflect.ValueOf(entity)
+	value := reflect.Indirect(reflectValue).FieldByName(fieldName)
+
+	return value
+}
+
+func _getQueryUpdate(entity interface{}) string {
+	val := reflect.ValueOf(entity).Elem()
+
+	var query strings.Builder
+	query.WriteString("UPDATE fs_auto.")
+	query.WriteString(val.Type().Name())
+	query.WriteString(" SET ")
+
+	totalFields := val.Type().NumField()
+	var id string
+	for i := 0; i < totalFields; i++ {
+		if val.Type().Field(i).Tag.Get("db") == "id" {
+			id = _getFieldValue(entity, val.Type().Field(i))
+			continue
+		}
+
+		query.WriteString(val.Type().Field(i).Tag.Get("db"))
+		query.WriteString("=")
+		query.WriteString(_getFieldValue(entity, val.Type().Field(i)))
+		if i < totalFields-1 {
+			query.WriteString(",")
+		}
+	}
+	query.WriteString(" WHERE id=")
+	query.WriteString(id)
+
+	return query.String()
 }

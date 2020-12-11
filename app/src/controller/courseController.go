@@ -8,14 +8,12 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
+	"github.com/felipesulzbach/exemplo-api-rest/app/src/controller/contract"
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/service"
-	"github.com/gorilla/mux"
 
 )
 
 func getAllCourse(w http.ResponseWriter, r *http.Request) {
-	//	list, err := env.db.FindAllCourse()
 	response, err := service.FindAllCourse()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -27,9 +25,12 @@ func getAllCourse(w http.ResponseWriter, r *http.Request) {
 }
 
 func getByIDCourse(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	//id := r.FormValue("id")
-	id, _ := strconv.ParseInt(params["id"], 10, 64)
+	var contract contract.CourseContract
+	id, err := contract.ValidatePath(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	response, err := service.FindByIDCourse(id)
 	switch {
@@ -50,8 +51,12 @@ func getByIDCourse(w http.ResponseWriter, r *http.Request) {
 }
 
 func createCourse(w http.ResponseWriter, r *http.Request) {
-	var entity model.Course
-	_ = json.NewDecoder(r.Body).Decode(&entity)
+	var contract contract.CourseContract
+	entity, err := contract.ValidateBodyCreate(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	response, err := service.InsertCourse(entity)
 	if err != nil {
@@ -64,8 +69,12 @@ func createCourse(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateCourse(w http.ResponseWriter, r *http.Request) {
-	var entity model.Course
-	_ = json.NewDecoder(r.Body).Decode(&entity)
+	var contract contract.CourseContract
+	entity, err := contract.ValidateBodyUpdate(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	response, err := service.UpdateCourse(entity)
 	if err != nil {
@@ -78,9 +87,12 @@ func updateCourse(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteCourse(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	//id := r.FormValue("id")
-	id, _ := strconv.ParseInt(params["id"], 10, 64)
+	var contract contract.CourseContract
+	id, err := contract.ValidatePath(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	if err := service.DeleteCourse(id); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

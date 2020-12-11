@@ -4,89 +4,120 @@ import (
 	"log"
 
 	"github.com/felipesulzbach/exemplo-api-rest/app/src/model"
+	"github.com/felipesulzbach/exemplo-api-rest/app/src/util"
 
 )
 
 // FindAllStudent ...
 func FindAllStudent() ([]*model.Student, error) {
-	db, err := newDB()
+	objectMap, err := getAll("student")
 	if err != nil {
 		log.Panic(err)
 		return nil, err
 	}
 
-	rows, err := db.Query("SELECT * FROM fs_auto.student")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	list := make([]*model.Student, 0)
-	for rows.Next() {
+	result := make([]*model.Student, 0)
+	for _, object := range objectMap {
 		item := new(model.Student)
-		err := rows.Scan(&item.Person.ID, &item.SchoolClass.ID)
+
+		objectJSON, err := util.Serializer(object)
 		if err != nil {
 			return nil, err
 		}
-		list = append(list, item)
-	}
-	if err = rows.Err(); err != nil {
-		return nil, err
+
+		err = util.Unserializer(objectJSON, &item)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, item)
 	}
 
-	db.closeDB()
-	return list, nil
+	return result, nil
 }
 
 // FindByIDStudent ...
 func FindByIDStudent(id int64) (*model.Student, error) {
-	db, err := newDB()
+	object, err := getByID("student", id)
 	if err != nil {
 		log.Panic(err)
 		return nil, err
 	}
 
-	row := db.QueryRow("SELECT * FROM fs_auto.student WHERE id=$1", id)
-	item := new(model.Student)
-	if err := row.Scan(&item.Person.ID, &item.SchoolClass.ID); err != nil {
+	objectJSON, err := util.Serializer(object)
+	if err != nil {
 		return nil, err
 	}
 
-	db.closeDB()
+	item := new(model.Student)
+	err = util.Unserializer(objectJSON, &item)
+	if err != nil {
+		return nil, err
+	}
+
 	return item, nil
 }
 
 // InsertStudent ...
-func InsertStudent(entity model.Student) (int64, error) {
-	db, err := newDB()
+func InsertStudent(entity model.Student) (*model.Student, error) {
+	item := new(model.Student)
+	id, err := create(item, entity)
 	if err != nil {
 		log.Panic(err)
-		return 0, err
+		return nil, err
 	}
 
-	sqlStatement := "INSERT INTO fs_auto.student (school_class_id) VALUES ($1) RETURNING id"
-	var id int64
-	if err := db.QueryRow(sqlStatement, entity.SchoolClass.ID).Scan(&id); err != nil {
-		return 0, err
+	entity.Person.ID = id
+	object, err := FindByIDStudent(id)
+	if err != nil {
+		log.Panic(err)
+		return nil, err
 	}
 
-	db.closeDB()
-	return id, nil
+	objectJSON, err := util.Serializer(object)
+	if err != nil {
+		return nil, err
+	}
+
+	err = util.Unserializer(objectJSON, &item)
+	if err != nil {
+		return nil, err
+	}
+
+	return &entity, nil
 }
 
 // UpdateStudent ...
-func UpdateStudent(entity model.Student) error {
-	db, err := newDB()
+func UpdateStudent(entity model.Student) (*model.Student, error) {
+	entityUpdate, err := FindByIDStudent(entity.Person.ID)
+	if err != nil {
+		log.Panic(err)
+		return nil, err
+	}
+
+	entityUpdate.Person = entity.Person
+	entityUpdate.SchoolClass = entity.SchoolClass
+
+	if err := update(entityUpdate); err != nil {
+		log.Panic(err)
+		return nil, err
+	}
+
+	result, err := FindByIDStudent(entity.Person.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+// DeleteStudent ...
+func DeleteStudent(id int64) error {
+	err := delete("student", id)
 	if err != nil {
 		log.Panic(err)
 		return err
 	}
 
-	sqlStatement := "UPDATE fs_auto.student SET school_class_id=$1 WHERE id=$1"
-	if _, err := db.Exec(sqlStatement, entity.Person.ID, entity.SchoolClass.ID); err != nil {
-		return err
-	}
-
-	db.closeDB()
 	return nil
 }
