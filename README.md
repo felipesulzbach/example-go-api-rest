@@ -2,7 +2,7 @@
 
 API REST example in GoLang.
 
---------------------------------------------------------------------------------
+---
 
 ## About Golang
 
@@ -39,7 +39,7 @@ GoLang intentionally leaves out many features of modern _OOP_ languages. Everyth
 
 ### Prerequisites
 
-- [Visual Studio Code](https://code.visualstudio.com/) or other IDE (Integrated Development Environment)
+- [Visual Studio Code](https://code.visualstudio.com/)
 - [Golang](https://golang.org/)
 - [Docker](https://hub.docker.com/search?offering=community&type=edition&operating_system=linux%2Cwindows)
 - [Postman](https://www.postman.com/downloads/)
@@ -50,13 +50,10 @@ The following technologies are critical for running/compiling application source
 
 - Access the application directory from the terminal and execute:
 
-  - Install the [gorilla/mux](https://github.com/gorilla/mux):
-
-    > go get -u github.com/gorilla/mux
-
-  - Install the [Postgres Driver](https://github.com/lib/pq):
-
-    > go get github.com/lib/pq
+  - > go get -u github.com/gorilla/mux
+  - > go get github.com/lib/pq
+  - > go get -u gorm.io/gorm
+  - > go get github.com/spf13/viper
 
 ### Execute endpoints in Postman
 
